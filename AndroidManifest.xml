@@ -19,10 +19,10 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <permission
-        android:name="com.mobicules.wecam.permission.C2D_MESSAGE"
+        android:name="com.android.zukut.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.mobicules.wecam.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.android.zukut.permission.C2D_MESSAGE" />
     
     
     <application
