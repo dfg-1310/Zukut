@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Zukut</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+     <!-- Login activity -->
+    <string name="username_text">User Name</string>
+    <string name="mobilenumber_text">Mobile Number</string>
+    <string name="login">Login</string>
+    
+	
+	    <!-- activity_call_pop_up -->
+    <string name="activity_call_pop_up_calling_txt">Calling Sarah Smith</string>
+    <string name="activity_call_pop_up_edit_txt_hint">You are not friends with this user&#8230; Please enter a message to introduce yourself!"</string>
+    <string name="activity_call_pop_up_end_call_btn_txt">END CALL</string>
+    <string name="activity_call_pop_up_call_btn_txt">CALL</string>
+    <string name="capital_cancel">CANCEL</string>
+	
+    
+    <string name="report_user_text">Report User</string>
+    <string name="report_user_dialog_title">Why are you reporting this user?</string>
+    <string name="report_user_message">Thanks for reporting. Our team shall review your report and take the necessary action.</string>
+    <string name="report_user_failure_message">There was an error submitting your report, please try again.</string>
+    <string name="txt_calling">Calling</string>
+    <string name="purchase_successfull_msg">Purchased Successfuly</string>
+    <string name="end_call">End Call</string>
+    <string name="sfx_disconnected_test"><b>Disconnected</b>,<i>trying to connect to chat server.....</i></string>
+	<string name="desc">ImageDescription</string>    
+
+	<!-- activity_incoming_call_pop_up -->
+    <string name="accept_txt">ACCEPT</string>
+    <string name="decline_txt">DECLINE</string>
+    <string name="incoming_video_call_txt">Incoming Video Call</string>
+	
+	
+</resources>

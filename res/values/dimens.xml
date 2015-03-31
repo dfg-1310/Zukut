@@ -1,0 +1,33 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="header_text_size">20sp</dimen>
+    <dimen name="body_text_size">15sp</dimen>
+    <dimen name="layout_margin_top">40dip</dimen>
+    <dimen name="dialog_button_width">240dip</dimen>
+    <dimen name="dialog_button_margin_top">10dip</dimen>
+    <!-- padding sizes -->
+    <dimen name="medium_padding">10dip</dimen>
+    <dimen name="small_padding">5dip</dimen>
+    <dimen name="large_padding">15dip</dimen>
+    <dimen name="xlarge_padding">20dip</dimen>
+    <dimen name="xxlarge_padding">35dip</dimen>
+
+    <!-- activity call pop-up -->
+    <dimen name="activity_call_pop_up_user_image">110dp</dimen>
+    <dimen name="activity_call_pop_up_accept_decline_button_padding">20dp</dimen>
+    <dimen name="end_button">18sp</dimen>
+    <dimen name="activity_call_pop_up_accept_decline_button_size">12sp</dimen>
+
+     <dimen name="very_large_text_size">20sp</dimen>
+    <dimen name="large_text_size">18sp</dimen>
+    <dimen name="medium_text_size">18sp</dimen>
+    <dimen name="name_side_menu">18dp</dimen>
+    <dimen name="small_text_size">12sp</dimen>
+    <dimen name="very_small_text_size">11sp</dimen>
+    
+    <!-- activity_incoming_call_pop_up -->
+    <dimen name="activity_incoming_call_userImage">165dp</dimen>
+</resources>

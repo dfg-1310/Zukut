@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/activity_login_section_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/activity_login_username_textview"
+            style="@style/login_text_view"
+            android:layout_marginTop="0dip"
+            android:text="@string/username_text" />
+
+        <LinearLayout
+            style="@style/login_edittext_border_layout"
+            android:background="@drawable/rounded_border_layout" >
+
+            <EditText
+                android:id="@+id/activity_login_username_edittext"
+                style="@style/login_edit_text"
+                android:background="@drawable/rounded_edittext"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:maxLength="40"
+                android:maxLines="1" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/activity_login_password_textview"
+            style="@style/login_text_view"
+            android:text="@string/mobilenumber_text" />
+
+        <LinearLayout
+            style="@style/login_edittext_border_layout"
+            android:layout_marginBottom="20dip"
+            android:background="@drawable/rounded_border_layout" >
+
+            <EditText
+                android:id="@+id/activity_login_mobileno_edittext"
+                style="@style/login_edit_text"
+                android:background="@drawable/rounded_edittext"
+                android:imeOptions="actionDone"
+                android:inputType="textPhonetic"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:password="true" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_login_button_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:layout_marginTop="5dip"
+        android:clickable="false" >
+
+        <Button
+            android:id="@+id/activity_login_button"
+            style="@style/wrap_content.select_postcard_option"
+            android:layout_centerInParent="true"
+            android:clickable="true"
+            android:background="#0098DC"
+            android:text="@string/login" >
+        </Button>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/activity_call_screen_layout"
+        style="@style/fill_parent"
+        android:orientation="vertical"
+        android:weightSum="100" >
+
+        <!--
+              <LinearLayout
+            android:id="@+id/activity_call_screen_header_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@drawable/banner_bg"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+             >
+
+            <FrameLayout
+                android:id="@+id/banner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        -->
+
+        <FrameLayout
+            android:id="@+id/activity_call_screen_body_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="100"
+            android:background="@color/transparent_color_code" >
+
+            <RelativeLayout
+                android:id="@+id/activity_wecam_body_layouts"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <FrameLayout
+                    android:id="@+id/activity_call_subscriberview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@color/transparent_color_code" />
+
+                <FrameLayout
+                    android:id="@+id/activity_call_subscriberview_circullar_outer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
+
+                    <FrameLayout
+                        android:id="@+id/activity_call_subscriberview_circullar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/activity_call_publisherview_circullar_outer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
+
+                    <FrameLayout
+                        android:id="@+id/activity_call_publisherview_inner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center" />
+                </FrameLayout>
+                <!-- <com.mobicules.wecamandroid.customviews.CustomRelativeLayout -->
+
+                <FrameLayout
+                    android:id="@+id/activity_call_publisherview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" >
+
+                <Button
+                    android:id="@+id/activity_call_friend_volume_control_button"
+                    style="@style/wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/activity_call_flip_camera_button"
+                    android:background="@drawable/sound_icon" >
+                </Button>
+
+                <Button
+                    android:id="@+id/activity_call_flip_camera_button"
+                    style="@style/wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/call_activity_flip_camera_selector" >
+                </Button>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="50dp"
+                android:gravity="center_horizontal" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" >
+
+                    <FrameLayout
+                        android:id="@+id/activity_footer_call_screen_chat_imageview_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/medium_padding" >
+
+                        <ImageView
+                            android:id="@+id/activity_footer_call_screen_chat_imageview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/call_activity_chat_icn_selector"
+                            android:contentDescription="@string/desc" />
+
+                        <TextView
+                            android:id="@+id/activity_footer_call_screen_chat_msg_count_textview"
+                            style="@style/wrap_content"
+                            android:layout_gravity="right"
+                            android:background="@drawable/notification_text_bg"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="@color/white_color_code"
+                            android:textSize="@dimen/very_small_text_size"
+                            android:visibility="invisible" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/layout_header_call_screen_end_call_layout"
+                        style="@style/wrap_content"
+                        android:layout_marginLeft="@dimen/medium_padding"
+                        android:clickable="true" >
+
+                        <Button
+                            android:id="@+id/end_call"
+                            style="@style/wrap_content"
+                            android:background="@drawable/call_activity_end_call_selector"
+                            android:clickable="false"
+                            android:text="@string/end_call"
+                            android:textColor="@color/white_color_code"
+                            android:textSize="@dimen/end_button" />
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/activity_footer_call_screen_mic_imageview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/medium_padding"
+                        android:layout_marginRight="@dimen/medium_padding"
+                        android:background="@drawable/call_activity_mic_selector"
+                        android:contentDescription="@string/desc" />
+
+                    <ImageView
+                        android:id="@+id/activity_footer_call_screen_video_imageview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/medium_padding"
+                        android:background="@drawable/call_activity_cam_selector"
+                        android:contentDescription="@string/desc" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/activity_call_report_user_button"
+                style="@style/wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/grey_rounded_border"
+                android:gravity="center_horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/report_user_text"
+                android:textColor="@color/white_color_code"
+                android:textSize="11sp" >
+            </Button>
+        </FrameLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_call_chat_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#000000" >
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/messagebox"
+            android:layout_alignParentTop="true" >
+
+            <ScrollView
+                android:id="@+id/scroller"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#FFFFFF" >
+
+                <LinearLayout
+                    android:id="@+id/messageView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:orientation="vertical"
+                    android:paddingBottom="8dip"
+                    android:paddingLeft="8dip"
+                    android:paddingRight="8dip" >
+                </LinearLayout>
+                <!--
+                     <TextView
+                    android:id="@+id/messageView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:paddingBottom="8dip"
+                    android:paddingLeft="8dip"
+                    android:paddingRight="8dip"
+                    android:textColor="#000000" />
+                -->
+            </ScrollView>
+
+            <Button
+                android:id="@+id/download_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|right"
+                android:layout_margin="5dp"
+                android:background="@drawable/download_ic" />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/messagebox"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="false"
+            android:background="@color/white_color_code"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/chat_conn_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/message"
+                android:textColor="@color/grey"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/sendMessageButton"
+                android:background="@drawable/send_message_bg"
+                android:gravity="top"
+                android:imeOptions="actionSend"
+                android:padding="5dp"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/sendMessageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="false"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/send_msg_btn_selector" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

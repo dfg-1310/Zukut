@@ -1,0 +1,101 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <ScrollView
+        style="@style/fill_parent"
+        android:layout_gravity="center_vertical"
+        android:background="@color/transparent" >
+
+        <LinearLayout
+            android:id="@+id/activity_incoming_call_pop_up_white_pop_up_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_popup_bg"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/activity_incoming_call_pop_up_calling_texview"
+                style="@style/wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/medium_padding"
+                android:layout_marginRight="@dimen/medium_padding"
+                android:text="@string/incoming_video_call_txt"
+                android:textColor="@color/black"
+                android:textSize="@dimen/very_large_text_size"
+                android:textStyle="bold" />
+
+            <FrameLayout style="@style/height_wrap_content" >
+
+                <ImageView
+                    android:id="@+id/activity_incoming_call_pop_up_user_imageview"
+                    android:layout_width="@dimen/activity_incoming_call_userImage"
+                    android:layout_height="@dimen/activity_incoming_call_userImage"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/desc"
+                    android:src="@drawable/user_image" />
+
+                <ImageView
+                    android:layout_width="@dimen/activity_incoming_call_userImage"
+                    android:layout_height="@dimen/activity_incoming_call_userImage"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/desc"
+                    android:src="@drawable/friend_bg" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/activity_incoming_call_pop_up_frnd_name_texview"
+                style="@style/wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/medium_padding"
+                android:layout_marginLeft="@dimen/medium_padding"
+                android:layout_marginRight="@dimen/medium_padding"
+                android:textColor="@color/black"
+                android:textSize="@dimen/medium_text_size"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/activity_incoming_call_pop_up_imageView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/desc"
+                android:src="@drawable/dyk_invite" />
+
+            <LinearLayout
+                style="@style/height_wrap_content"
+                android:layout_marginLeft="@dimen/medium_padding"
+                android:layout_marginRight="@dimen/medium_padding"
+                android:layout_marginTop="@dimen/medium_padding"
+                android:orientation="horizontal"
+                android:weightSum="2" >
+
+                <Button
+                    android:id="@+id/activity_incoming_call_pop_up_decline_btn"
+                    style="@style/wrap_width_weight.red_rounded_btn"
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/activity_call_pop_up_accept_decline_button_padding"
+                    android:paddingRight="@dimen/activity_call_pop_up_accept_decline_button_padding"
+                    android:text="@string/decline_txt"
+                    android:textSize="@dimen/medium_text_size"
+                    android:textStyle="bold" >
+                </Button>
+
+                <Button
+                    android:id="@+id/activity_incoming_call_pop_up_accept_btn"
+                    style="@style/wrap_width_weight.green_rounded_btn"
+                    android:layout_weight="1"
+                    android:paddingLeft="@dimen/activity_call_pop_up_accept_decline_button_padding"
+                    android:paddingRight="@dimen/activity_call_pop_up_accept_decline_button_padding"
+                    android:text="@string/accept_txt"
+                    android:textSize="@dimen/medium_text_size"
+                    android:textStyle="bold" >
+                </Button>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
