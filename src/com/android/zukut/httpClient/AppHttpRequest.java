@@ -33,8 +33,13 @@ public class AppHttpRequest extends StringRequest {
             params = new HashMap<String, String>();
         }
 
+//        if(val != null && val instanceof Boolean){
+//            params.put(key, (Boolean)val);
+//        }
+        
         if (val != null)
             params.put(key, val.toString());
+        
         return this;
     }
 

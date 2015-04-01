@@ -102,8 +102,8 @@ public class UserAdapter extends BaseAdapter {
 	 * @param friend
 	 */
 	private void setData(ViewHolder holder, User user) {
-		holder.userNameTextView.setText(user.getUName());
-		holder.mobileNumberTextView.setText(user.getmNumber());
+		holder.userNameTextView.setText(user.getFullName());
+		holder.mobileNumberTextView.setText(user.getMobile());
 	}
 
 }

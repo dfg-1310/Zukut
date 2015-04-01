@@ -5,6 +5,11 @@ public class AppConstant {
 	public static final String USER_LOGGED_IN = "user_logged_in";
 	public static final String GCM_API_KEY = "AIzaSyDminYojH0zxgUeydc_pr1poCQFh-wXNoA";
 	public static final String GCM_PROJECT_NUMBER = "41108754588";
+    public static final String FULL_NAME = "fullname";
+    public static final String MOBILE_NUMBER = "mobilenumber";
+    public static final String ID = "id";
+    public static final String DEVICE_ID = "deviceid";
+    public static final String DEVICE_TOKEN = "devicetoken";
 
 	public interface IErrorCode {
 		String defaultErrorCode = "ER001";
