@@ -2,6 +2,7 @@ package com.android.zukut.httpClient;
 
 import com.android.zukut.bo.Notification;
 import com.android.zukut.bo.User;
+import com.android.zukut.util.UserList;
 
 
 public class AppRequestBuilder {
@@ -17,7 +18,7 @@ public class AppRequestBuilder {
 	}
 
 	public static AppHttpRequest getAllUsers(
-			AppResponseListener<String> appResponseListener) {
+			AppResponseListener<UserList> appResponseListener) {
 		return AppHttpRequest.getGetRequest(BASE_URL + "getAllUsers",
 				appResponseListener);
 	}

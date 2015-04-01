@@ -6,16 +6,20 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.zukut.R;
 import com.android.zukut.adapter.UserAdapter;
+import com.android.zukut.api.op.ContactResponseHandler;
 import com.android.zukut.api.op.ErrorObject;
 import com.android.zukut.bo.User;
 import com.android.zukut.httpClient.AppRequestBuilder;
-import com.android.zukut.httpClient.AppResponseListener;
+import com.android.zukut.httpClient.AppRestClient;
+import com.android.zukut.util.UserList;
 
 public class ContactActivity extends Activity {
 
+    private static final String API_TAG = "ContactActivity";
     private ListView listView;
 
     @Override
@@ -30,12 +34,14 @@ public class ContactActivity extends Activity {
     }
 
     private void getAllUsers() {
-        AppRequestBuilder.getAllUsers(new AppResponseListener<String>(String.class, ContactActivity.this) {
+
+        AppRestClient.getClient().sendRequest(AppRequestBuilder.getAllUsers(new ContactResponseHandler(UserList.class, ContactActivity.this) {
 
             @Override
-            public void onSuccess(String response, Long serverTime) {
-                // setDataInlist(new ArrayList<User>());
+            public void onSuccess(UserList response, Long serverTime) {
+                 setDataInlist(response.getUser());
 
+                showToast(response.toString());
             }
 
             @Override
@@ -43,7 +49,7 @@ public class ContactActivity extends Activity {
                 // TODO Auto-generated method stub
                 // showToast(error.getErrorMessage());
             }
-        });
+        }), API_TAG);
 
     }
 
@@ -54,11 +60,15 @@ public class ContactActivity extends Activity {
         return true;
     }
 
-    private void setDaataInlist(List<User> list) {
+    private void setDataInlist(List<User> list) {
         UserAdapter adpAdapter = new UserAdapter(ContactActivity.this, list);
 
         listView.setAdapter(adpAdapter);
 
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

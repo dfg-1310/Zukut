@@ -1,11 +1,14 @@
 package com.android.zukut.httpClient;
 
+import java.util.List;
+
 import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.zukut.api.op.ErrorObject;
+import com.android.zukut.bo.User;
 import com.android.zukut.util.AppUtil;
 import com.google.gson.JsonObject;
 
@@ -28,6 +31,7 @@ public abstract class AppResponseListener<T> implements
         this.context = context;
     }
 
+     
     @Override
     public void onResponse(String response) {
         Log.i(LOG_TAG, "api response : " + response.toString());
