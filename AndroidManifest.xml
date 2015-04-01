@@ -12,7 +12,6 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="18" />
 
-    
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -23,39 +22,43 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.android.zukut.permission.C2D_MESSAGE" />
-    
-    
+
     <application
+        android:name="com.android.zukut.activity.BaseApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
-            android:name="com.android.zukut.activity.SplashActivity"
+            android:name=".activity.SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.acion.MAIN" />
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.android.zukut.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.android.zukut.activity.ContactActivity"
+            android:name=".activity.ContactActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.android.zukut.activity.IncomingCallActivity"
+            android:name=".activity.IncomingCallActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.android.zukut.activity.OngoingCallActivity"
+            android:name=".activity.OngoingCallActivity"
             android:label="@string/app_name" >
         </activity>
-        
-         <!-- Broadcast Receivers -->
+
+        <!-- Broadcast Receivers -->
         <receiver
             android:name="com.android.zukut.activity.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -65,8 +68,8 @@
                 <category android:name="com.android.zukut" />
             </intent-filter>
         </receiver>
-    
+
+        <service android:name="com.android.zukut.activity.GcmIntentService" />
     </application>
 
-     
 </manifest>
