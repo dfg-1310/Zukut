@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.StringRequest;
-
+import com.android.zukut.util.AppFile;
 
 public class AppHttpRequest extends StringRequest {
 
@@ -14,7 +14,7 @@ public class AppHttpRequest extends StringRequest {
     }
 
     private final AppResponseListener listener;
-//    private Map<String, AppFile> fileParams;
+    private Map<String, AppFile> fileParams;
     private Map<String, String> params;
     private String url;
 
@@ -23,10 +23,10 @@ public class AppHttpRequest extends StringRequest {
     }
 
     private boolean loginRequired;
-//
-//    Map<String, AppFile> getFileParams() {
-//        return fileParams;
-//    }
+
+    Map<String, AppFile> getFileParams() {
+        return fileParams;
+    }
 
     public AppHttpRequest addParam(String key, Object val) {
         if (params == null) {
@@ -38,13 +38,13 @@ public class AppHttpRequest extends StringRequest {
         return this;
     }
 
-//    public AppHttpRequest addFile(String key, AppFile file) {
-//        if (fileParams == null) {
-//            fileParams = new HashMap<String, AppFile>();
-//        }
-//        fileParams.put(key, file);
-//        return this;
-//    }
+    public AppHttpRequest addFile(String key, AppFile file) {
+        if (fileParams == null) {
+            fileParams = new HashMap<String, AppFile>();
+        }
+        fileParams.put(key, file);
+        return this;
+    }
 
     @Override
     public String getUrl() {

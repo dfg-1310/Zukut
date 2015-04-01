@@ -1,6 +1,5 @@
 package com.android.zukut.httpClient;
 
-import android.R.bool;
 
 public class AppRequestBuilder {
 

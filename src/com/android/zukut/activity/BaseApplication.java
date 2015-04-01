@@ -20,7 +20,6 @@ public class BaseApplication extends Application {
         initializeVolley();
         _instance = this;
         getGCMRegId();
-       
     }
 
     private void initializeVolley() {

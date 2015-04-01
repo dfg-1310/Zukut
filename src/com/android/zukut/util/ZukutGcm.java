@@ -63,7 +63,7 @@ public class ZukutGcm {
                     gcm = GoogleCloudMessaging.getInstance(context);
                 }
 
-                regid = gcm.register(IAppConstant.GCM_SENDER_Id_Constant());
+                regid = gcm.register(AppConstant.GCM_PROJECT_NUMBER);
 
                 // not needed
                 // You should send the registration ID to your server over HTTP,

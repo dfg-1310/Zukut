@@ -7,14 +7,13 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 import com.android.zukut.R;
+import com.android.zukut.api.io.AppConstant;
 import com.android.zukut.api.io.PreferenceKeeper;
 import com.android.zukut.bo.GCMResponse;
 import com.android.zukut.util.AppConstant.INTENT_EXTRAS;
-import com.android.zukut.util.IAppConstant;
 
 /**
  * Service for sync friend.
@@ -37,13 +36,13 @@ public class SyncFriendsService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        gcmNotificationIntent = new Intent(
-                IAppConstant.getNotificationBroadCastAction());
-
-        startRingIntent = new Intent(IAppConstant.getStartRingBroadCastAction());
-
-        stopRingIntent = new Intent(IAppConstant.getStopRingBroadCastAction());
+//
+//        gcmNotificationIntent = new Intent(
+//                AppConstant.getNotificationBroadCastAction());
+//
+//        startRingIntent = new Intent(AppConstant.getStartRingBroadCastAction());
+//
+//        stopRingIntent = new Intent(AppConstant.getStopRingBroadCastAction());
 
     }
 
@@ -83,12 +82,12 @@ public class SyncFriendsService extends IntentService {
      */
     private void manageChat(GCMResponse gcmResponse) {
         // UPDATE_CHAT_NOTYFY_ACTION
-
-        Intent updateUserProfileIntent = new Intent(
-                IAppConstant.getUpdateChatNotifyBroadCastAction());
-        updateUserProfileIntent.putExtra(INTENT_EXTRAS.GCM_RESPONSE,
-                gcmResponse);
-        sendBroadcast(updateUserProfileIntent);
+//
+//        Intent updateUserProfileIntent = new Intent(
+//                IAppConstant.getUpdateChatNotifyBroadCastAction());
+//        updateUserProfileIntent.putExtra(INTENT_EXTRAS.GCM_RESPONSE,
+//                gcmResponse);
+//        sendBroadcast(updateUserProfileIntent);
 
     }
 
