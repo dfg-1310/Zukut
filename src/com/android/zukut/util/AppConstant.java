@@ -1,6 +1,7 @@
 package com.android.zukut.util;
 
 
+
 public class AppConstant {
 
 	public static final String USER_LOGGED_IN = "user_logged_in";
@@ -11,7 +12,7 @@ public class AppConstant {
 	public static final String ID = "id";
 	public static final String DEVICE_ID = "deviceid";
 	public static final String DEVICE_TOKEN = "devicetoken";
-	public static final String OPEN_TOK_API_KEY = null;
+	public static final String OPEN_TOK_API_KEY = "44565882";
 	  public static long RINGTONE_DELAY = 45000;
 
 	public interface IErrorCode {
@@ -138,4 +139,10 @@ public class AppConstant {
 		AlteHaas, HelveticaWorld, HelveticaRegular, HelveticaBold, HelveticaItalic
 	}
 
+	   public static String getCallPopUpViewActionBroadCastAction() {
+	        String broadCastAction = "com.android.zukut.incoming_call_pop_up_screen_view";// default
+	        return broadCastAction;
+
+	    }
+	
 }
