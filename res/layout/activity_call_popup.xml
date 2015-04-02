@@ -1,0 +1,187 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_call_pop_up_root_layout"
+    style="@style/fill_parent"
+    android:layout_gravity="center"
+    android:background="@color/transparent" >
+
+    <RelativeLayout
+        style="@style/fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:background="@color/white" >
+
+        <ScrollView
+            style="@style/fill_parent"
+            android:layout_gravity="center_vertical"
+            android:background="@color/transparent" >
+
+            <LinearLayout
+                style="@style/fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/activity_call_pop_up_calling_texview"
+                    style="@style/wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/medium_padding"
+                    android:text="@string/activity_call_pop_up_calling_txt"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/large_text_size"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    style="@style/layout_wrap"
+                    android:layout_marginLeft="@dimen/xlarge_padding"
+                    android:layout_marginRight="@dimen/xlarge_padding" >
+
+                    <FrameLayout
+                        android:layout_width="@dimen/activity_call_pop_up_user_image"
+                        android:layout_height="@dimen/activity_call_pop_up_user_image"
+                        android:layout_alignParentLeft="true" >
+
+                        <ImageView
+                            android:id="@+id/activity_call_pop_up_self_imageview"
+                            android:layout_width="@dimen/activity_call_pop_up_user_image"
+                            android:layout_height="@dimen/activity_call_pop_up_user_image"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/ic_launcher" />
+
+                        <ImageView
+                            android:layout_width="@dimen/activity_call_pop_up_user_image"
+                            android:layout_height="@dimen/activity_call_pop_up_user_image"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/friend_bg" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="@dimen/activity_call_pop_up_user_image"
+                        android:layout_height="@dimen/activity_call_pop_up_user_image"
+                        android:layout_alignParentRight="true" >
+
+                        <ImageView
+                            android:id="@+id/activity_call_pop_up_friend_imageview"
+                            android:layout_width="@dimen/activity_call_pop_up_user_image"
+                            android:layout_height="@dimen/activity_call_pop_up_user_image"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/ic_launcher" />
+
+                        <ImageView
+                            android:layout_width="@dimen/activity_call_pop_up_user_image"
+                            android:layout_height="@dimen/activity_call_pop_up_user_image"
+                            android:layout_gravity="center_horizontal"
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/friend_bg" />
+                    </FrameLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginBottom="@dimen/medium_padding"
+                        android:gravity="center_horizontal" >
+
+                        <ImageView
+                            android:id="@+id/activity_call_pop_up_right_arrow_imageview"
+                            style="@style/wrap_content"
+                            android:layout_marginLeft="@dimen/large_padding"
+                            android:background="@drawable/green_arrow"
+                            android:contentDescription="@string/desc" >
+                        </ImageView>
+
+                        <ImageView
+                            android:id="@+id/activity_call_pop_up_left_arrow_imageview"
+                            style="@style/wrap_content"
+                            android:layout_below="@id/activity_call_pop_up_right_arrow_imageview"
+                            android:layout_marginRight="@dimen/large_padding"
+                            android:background="@drawable/blue_arrow"
+                            android:contentDescription="@string/desc" >
+                        </ImageView>
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/activity_call_pop_up_tips_image"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/desc"
+                    android:paddingTop="@dimen/medium_padding"
+                    android:src="@drawable/dyk_invite" />
+
+                <!--
+        <Button
+            android:id="@+id/activity_call_pop_up_end_call_button"
+            style="@style/wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/xlarge_padding"
+            android:layout_marginTop="@dimen/medium_padding"
+            android:background="@drawable/call_activity_end_call_selector"
+            android:paddingLeft="@dimen/xlarge_padding"
+            android:paddingRight="@dimen/xlarge_padding" >
+        </Button>
+                -->
+
+                <Button
+                    android:id="@+id/activity_call_pop_up_end_call_button"
+                    style="@style/wrap_width_weight.red_rounded_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/xlarge_padding"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/activity_call_pop_up_end_call_btn_txt"
+                    android:textSize="@dimen/end_button"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/activity_call_pop_up_bottom_linear_layout"
+                    style="@style/height_wrap_content"
+                    android:layout_marginBottom="@dimen/xlarge_padding"
+                    android:layout_marginLeft="@dimen/xlarge_padding"
+                    android:layout_marginRight="@dimen/xlarge_padding"
+                    android:layout_marginTop="@dimen/xlarge_padding"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="2" >
+
+                    <Button
+                        android:id="@+id/activity_call_pop_up_cancel_call_button"
+                        style="@style/wrap_width_weight.red_rounded_btn"
+                        android:layout_weight="1"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="@string/capital_cancel"
+                        android:textSize="@dimen/medium_text_size"
+                        android:textStyle="bold"
+                        android:visibility="gone" >
+                    </Button>
+
+                    <Button
+                        android:id="@+id/activity_call_pop_up_make_call_button"
+                        style="@style/wrap_width_weight.green_rounded_btn"
+                        android:layout_weight="1"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:singleLine="true"
+                        android:text="@string/activity_call_pop_up_call_btn_txt"
+                        android:textSize="@dimen/medium_text_size"
+                        android:textStyle="bold"
+                        android:visibility="gone" >
+                    </Button>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp" />
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -48,8 +48,8 @@ public class PreferenceKeeper {
     }
 
     public void saveNotificatioInfo(Notification response) {
-        prefs.edit().putString(AppConstant.DEVICE_ID, response.getdTok()).commit();
-        prefs.edit().putString(AppConstant.DEVICE_TOKEN, response.getdId()).commit();
+        prefs.edit().putString(AppConstant.DEVICE_ID, response.getdId()).commit();
+        prefs.edit().putString(AppConstant.DEVICE_TOKEN, response.getdTok()).commit();
     }
 
     public Notification getNotificationInfo() {

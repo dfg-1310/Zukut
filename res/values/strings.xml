@@ -33,6 +33,10 @@
     <string name="accept_txt">ACCEPT</string>
     <string name="decline_txt">DECLINE</string>
     <string name="incoming_video_call_txt">Incoming Video Call</string>
-	
+	 <string name="leave_call_confirmation">Are you sure you want to end this call?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+   	
 	
 </resources>

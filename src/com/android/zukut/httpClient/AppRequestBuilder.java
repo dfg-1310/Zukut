@@ -1,5 +1,6 @@
 package com.android.zukut.httpClient;
 
+import com.android.zukut.bo.MakeCall;
 import com.android.zukut.bo.Notification;
 import com.android.zukut.bo.User;
 import com.android.zukut.util.UserList;
@@ -34,15 +35,15 @@ public class AppRequestBuilder {
 				.addParam("appVer", appVer);
 	}
 
-	public static AppHttpRequest call(String uId, String dId, String toUid,
+	public static AppHttpRequest call(long uId, String dId, long toUid,
 			String iText, boolean isUf, String token, String fromUName,
 			String toUName, String msg, String appver,
-			AppResponseListener<String> appResponseListener) {
+			AppResponseListener<MakeCall> appResponseListener) {
 		return AppHttpRequest
 				.getGetRequest(BASE_URL + "zcCall", appResponseListener)
 				.addParam("uId", uId).addParam("dId", dId)
 				.addParam("toUid", toUid).addParam("iText", iText)
-				.addParam("uf", isUf).addParam("token", token)
+				.addParam("token", token)
 				.addParam("fromUName", fromUName).addParam("toUName", toUName)
 				.addParam("msg", msg).addParam("appver", appver);
 	}

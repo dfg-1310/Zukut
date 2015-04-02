@@ -90,7 +90,7 @@ public class LoginActivity extends Activity {
                     public void onSuccess(Notification response, Long serverTime) {
                         new PreferenceKeeper(LoginActivity.this).saveNotificatioInfo(response);
                         startActivity(new Intent(LoginActivity.this, ContactActivity.class));
-
+                        finish();
                     }
 
                     @Override

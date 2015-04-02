@@ -10,10 +10,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.android.zukut.R;
-import com.android.zukut.api.io.AppConstant;
-import com.android.zukut.api.io.PreferenceKeeper;
 import com.android.zukut.bo.GCMResponse;
 import com.android.zukut.util.AppConstant.INTENT_EXTRAS;
+import com.android.zukut.util.PreferenceKeeper;
 
 /**
  * Service for sync friend.
