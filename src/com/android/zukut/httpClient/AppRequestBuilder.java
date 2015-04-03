@@ -1,16 +1,16 @@
 package com.android.zukut.httpClient;
 
+import com.android.zukut.bo.AcceptCallOutput;
+import com.android.zukut.bo.CallDetail;
 import com.android.zukut.bo.MakeCall;
 import com.android.zukut.bo.Notification;
 import com.android.zukut.bo.User;
 import com.android.zukut.util.UserList;
 
-
 public class AppRequestBuilder {
 
 	private static final String BASE_URL = "http://45.56.78.242:8080/zukut/";
 
-	
 	public static AppHttpRequest login(String username, String phoneNumber,
 			AppResponseListener<User> appResponseListener) {
 		return AppHttpRequest
@@ -26,7 +26,7 @@ public class AppRequestBuilder {
 
 	public static AppHttpRequest accept(String uId, String fromUid, String sId,
 			String dId, String chId, String token, String appVer,
-			AppResponseListener<String> appResponseListener) {
+			AppResponseListener<AcceptCallOutput> appResponseListener) {
 		return AppHttpRequest
 				.getGetRequest(BASE_URL + "zcAccept", appResponseListener)
 				.addParam("uId", uId).addParam("fromUid", fromUid)
@@ -43,14 +43,14 @@ public class AppRequestBuilder {
 				.getGetRequest(BASE_URL + "zcCall", appResponseListener)
 				.addParam("uId", uId).addParam("dId", dId)
 				.addParam("toUid", toUid).addParam("iText", iText)
-				.addParam("token", token)
-				.addParam("fromUName", fromUName).addParam("toUName", toUName)
-				.addParam("msg", msg).addParam("appver", appver);
+				.addParam("token", token).addParam("fromUName", fromUName)
+				.addParam("toUName", toUName).addParam("msg", msg)
+				.addParam("appver", appver);
 	}
 
-	public static AppHttpRequest callDtl(String fromUid, String dtl,
-			String chId, String uId, String token, String appver,
-			AppResponseListener<String> appResponseListener) {
+	public static AppHttpRequest callDtl(long fromUid, String dtl, String chId,
+			long uId, String token, String appver,
+			AppResponseListener<CallDetail> appResponseListener) {
 		return AppHttpRequest
 				.getGetRequest(BASE_URL + "zcDtl", appResponseListener)
 				.addParam("fromUid", fromUid).addParam("dtl", dtl)
@@ -70,7 +70,8 @@ public class AppRequestBuilder {
 
 	public static AppHttpRequest callReject(String uId, String fromUid,
 			String toUid, String sId, String chId, String dId, String token,
-			String appver, AppResponseListener<String> appResponseListener) {
+			String appver,
+			AppResponseListener<AcceptCallOutput> appResponseListener) {
 		return AppHttpRequest
 				.getGetRequest(BASE_URL + "zcReject", appResponseListener)
 				.addParam("uId", uId).addParam("fromUid", fromUid)

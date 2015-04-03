@@ -1,19 +1,18 @@
 package com.android.zukut.util;
 
-
-
 public class AppConstant {
 
 	public static final String USER_LOGGED_IN = "user_logged_in";
 	public static final String GCM_API_KEY = "AIzaSyDminYojH0zxgUeydc_pr1poCQFh-wXNoA";
-	public static final String GCM_PROJECT_NUMBER = "41108754588";
+	public static final String GCM_PROJECT_NUMBER = "541108754588";
 	public static final String FULL_NAME = "fullname";
 	public static final String MOBILE_NUMBER = "mobilenumber";
 	public static final String ID = "id";
 	public static final String DEVICE_ID = "deviceid";
 	public static final String DEVICE_TOKEN = "devicetoken";
-	public static final String OPEN_TOK_API_KEY = "44565882";
-	  public static long RINGTONE_DELAY = 45000;
+	public static final String OPEN_TOK_API_KEY = "45184132";
+	public static long RINGTONE_DELAY = 45000;
+	public static final String OPEN_TOK_API_SECRET = "8b442a03f4246f7eec2e40260f2ab1c0fe7ed771";
 
 	public interface IErrorCode {
 		String defaultErrorCode = "ER001";
@@ -139,10 +138,10 @@ public class AppConstant {
 		AlteHaas, HelveticaWorld, HelveticaRegular, HelveticaBold, HelveticaItalic
 	}
 
-	   public static String getCallPopUpViewActionBroadCastAction() {
-	        String broadCastAction = "com.android.zukut.incoming_call_pop_up_screen_view";// default
-	        return broadCastAction;
+	public static String getCallPopUpViewActionBroadCastAction() {
+		String broadCastAction = "com.android.zukut.incoming_call_pop_up_screen_view";// default
+		return broadCastAction;
 
-	    }
-	
+	}
+
 }

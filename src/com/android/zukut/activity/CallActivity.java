@@ -22,6 +22,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -49,15 +50,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.zukut.R;
+import com.android.zukut.api.op.ErrorObject;
+import com.android.zukut.bo.AcceptCallOutput;
 import com.android.zukut.bo.CallDetail;
 import com.android.zukut.bo.GCMResponse;
 import com.android.zukut.bo.MakeCall;
+import com.android.zukut.httpClient.AppRequestBuilder;
+import com.android.zukut.httpClient.AppResponseListener;
+import com.android.zukut.httpClient.AppRestClient;
 import com.android.zukut.util.AppConstant;
 import com.android.zukut.util.AppConstant.FontFace;
 import com.android.zukut.util.AppConstant.INTENT_EXTRAS;
 import com.android.zukut.util.BlueToothClass;
 import com.android.zukut.util.CallType;
 import com.android.zukut.util.CircleVideoRenderer;
+import com.android.zukut.util.PreferenceKeeper;
 import com.android.zukut.util.Utils;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
@@ -80,21 +87,13 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	private OnTouchListener touchListenerPublisherView;
 	private OnTouchListener touchListenerSubscriberView;
 	private String tag = "CallActivity";
-
 	private static Handler callResponseHandler;
-
 	private FrameLayout endCallFrameLayout;
-
 	private Publisher mPublisher;
-
 	private Subscriber mSubscriber;
-
 	private Session mSession;
-
 	// private WakeLock wakeLock;
-
 	private FrameLayout publisherViewContainer;
-
 	private FrameLayout subscriberViewContainer;
 	private FrameLayout subscriberView_Inner;
 	private FrameLayout subscriberView_Outer;
@@ -113,15 +112,12 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	private static final boolean SUBSCRIBE_TO_SELF = false;
 
 	private static final String LOGTAG = CallActivity.class.getName();
+	private static final String API_TAG = null;
 
 	private MakeCall makeCall;
-
 	private CallDetail callDetail;
-
 	// private WeCamApiClient caller;
-
 	private CallType callType;
-
 	// Replace with your generated Session ID
 	public static String SESSION_ID = "";
 
@@ -150,7 +146,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	private Animation moveAnimBackward;
 
 	// private Button removeAdsButton;
-	private Button reportUserButton;
+	// private Button reportUserButton;
 	private ImageView chatImageView;
 
 	private Button downloadButton;
@@ -412,25 +408,6 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	}
 
 	/**
-	 * 
-	 * @param ads
-	 *            if 0 hides ads view else show ads view
-	 */
-	// private void manageAdsHeaderView(int ads) {
-	// // hide ads header view.
-	// if (ads == 0) {
-	// headerLinearLayout.setVisibility(View.GONE);
-	// int screenHeight = getScreenHeight();
-	// bodyFrameLayout.getLayoutParams().height = screenHeight;
-	// // removeAdsButton.setVisibility(View.GONE);
-	// } else {
-	// // removeAdsButton.setVisibility(View.VISIBLE);
-	// headerLinearLayout.setVisibility(View.VISIBLE);
-	// }
-	//
-	// }
-
-	/**
 	 * Method to initialize the GCM response handler.
 	 */
 	private void initializeGcmResponseHandler() {
@@ -475,15 +452,8 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		camImageView = (ImageView) findViewById(R.id.activity_footer_call_screen_video_imageview);
 		flipCamButton = (Button) findViewById(R.id.activity_call_flip_camera_button);
 		chatImageView = (ImageView) findViewById(R.id.activity_footer_call_screen_chat_imageview);
-		reportUserButton = (Button) findViewById(R.id.activity_call_report_user_button);
-		reportUserButton
-				.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
-		// removeAdsButton = (Button)
-		// findViewById(R.id.activity_call_remove_ads_button);
-		volumeButton = (Button) findViewById(R.id.activity_call_friend_volume_control_button);
-
-		// headerLinearLayout = (LinearLayout)
-		// findViewById(R.id.activity_call_screen_header_layout);
+		// volumeButton = (Button)
+		// findViewById(R.id.activity_call_friend_volume_control_button);
 		bodyFrameLayout = (FrameLayout) findViewById(R.id.activity_call_screen_body_layout);
 
 		callScreenLinearLayout = (LinearLayout) findViewById(R.id.activity_call_screen_layout);
@@ -501,13 +471,8 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		camImageView.setClickable(false);
 		flipCamButton.setClickable(false);
 
-		reportUserButton.setOnClickListener(this);
-		// removeAdsButton.setOnClickListener(this);
-
 		endCallFrameLayout.setOnClickListener(this);
-
 		volumeButton.setOnClickListener(this);
-
 		chat_conn_status = (TextView) findViewById(R.id.chat_conn_status);
 	}
 
@@ -555,13 +520,6 @@ public class CallActivity extends Activity implements Session.SessionListener,
 			// manageChat();
 			break;
 
-		// case R.id.activity_call_report_user_button:
-		// showReportUserDialog();
-		// break;
-
-		// case R.id.activity_call_remove_ads_button:
-		// showInAppPurchseDialog();
-		// break;
 		case R.id.activity_call_friend_volume_control_button:
 			isFriendVolumeActive = !isFriendVolumeActive;
 			muteFriendVolume(isFriendVolumeActive);
@@ -994,8 +952,29 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	 * user to Friends activity.
 	 */
 	private void endCallStartFriendsActivity() {
-
 		// TODO :: end call
+		PreferenceKeeper keeper = new PreferenceKeeper(this);
+		AppRestClient.getClient().sendRequest(
+				AppRequestBuilder.callEnd(SESSION_ID, ""
+						+ keeper.getUserInfo().getId(), "" + callHistoryId, ""
+						+ keeper.getUserInfo().getId(),
+						AppConstant.OPEN_TOK_API_SECRET,
+						new AppResponseListener<String>(String.class,
+								CallActivity.this) {
+
+							@Override
+							public void onSuccess(String t, Long serverTime) {
+								finish();
+
+							}
+
+							@Override
+							public void onError(ErrorObject error) {
+								finish();
+							}
+						}), API_TAG);
+
+		finish();
 
 	}
 
@@ -1431,6 +1410,38 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		// input, new AcceptCallOutput(), API_NAME.callReject, true);
 		//
 		// finishCallScreen();
+
+		PreferenceKeeper keeper = new PreferenceKeeper(this);
+
+		AppRestClient.getClient().sendRequest(
+				AppRequestBuilder.callReject("" + keeper.getUserInfo().getId(),
+						"" + makeCall.getuId(), ""
+								+ keeper.getUserInfo().getId(), makeCall
+								.getsId(), "" + callDetail.getChId(),
+						getDeviceId(), AppConstant.OPEN_TOK_API_SECRET, "1",
+						new AppResponseListener<AcceptCallOutput>(
+								AcceptCallOutput.class, CallActivity.this) {
+
+							@Override
+							public void onSuccess(
+									AcceptCallOutput callRejectOutput,
+									Long serverTime) {
+								if (callRejectOutput != null
+										&& !callRejectOutput.getCs()
+												.equalsIgnoreCase("OK")) {
+									showToast(callRejectOutput.getCsMsg());
+
+								}
+							}
+
+							@Override
+							public void onError(ErrorObject error) {
+								// TODO Auto-generated method stub
+								showToast(error.getErrorMessage());
+							}
+						}), API_TAG);
+
+		finish();
 
 	}
 
@@ -2369,7 +2380,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		camImageView.setVisibility(View.INVISIBLE);
 		flipCamButton.setVisibility(View.INVISIBLE);
 		chatImageView.setVisibility(View.INVISIBLE);
-		reportUserButton.setVisibility(View.INVISIBLE);
+		// reportUserButton.setVisibility(View.INVISIBLE);
 		// removeAdsButton.setVisibility(View.INVISIBLE);
 		volumeButton.setVisibility(View.INVISIBLE);
 		chatMsgCountTextView.setVisibility(View.INVISIBLE);
@@ -2384,7 +2395,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		camImageView.setVisibility(View.VISIBLE);
 		flipCamButton.setVisibility(View.VISIBLE);
 		chatImageView.setVisibility(View.VISIBLE);
-		reportUserButton.setVisibility(View.VISIBLE);
+		// reportUserButton.setVisibility(View.VISIBLE);
 		// removeAdsButton.setVisibility(View.VISIBLE);
 		volumeButton.setVisibility(View.VISIBLE);
 		if (chatMsgCount > 0) {
@@ -2785,4 +2796,17 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		}
 	}
 
+	public String getDeviceId() {
+		String deviceId = ((TelephonyManager) CallActivity.this
+				.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+		if (deviceId != null && !deviceId.equalsIgnoreCase("null")) {
+			// System.out.println("imei number :: " + deviceId);
+			return deviceId;
+		}
+
+		deviceId = android.os.Build.SERIAL;
+		// System.out.println("serial id :: " + deviceId);
+		return deviceId;
+
+	}
 }

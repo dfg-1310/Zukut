@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -20,8 +21,13 @@ import android.widget.Toast;
 
 import com.android.zukut.R;
 import com.android.zukut.api.op.ErrorObject;
+import com.android.zukut.bo.AcceptCallOutput;
 import com.android.zukut.bo.CallDetail;
 import com.android.zukut.bo.GCMResponse;
+import com.android.zukut.bo.User;
+import com.android.zukut.httpClient.AppRequestBuilder;
+import com.android.zukut.httpClient.AppResponseListener;
+import com.android.zukut.httpClient.AppRestClient;
 import com.android.zukut.util.AppConstant;
 import com.android.zukut.util.AppConstant.FontFace;
 import com.android.zukut.util.AppConstant.INTENT_EXTRAS;
@@ -32,517 +38,630 @@ import com.android.zukut.util.Utils;
  * Class is used to show incoming call pop-up.
  * 
  */
-public class IncomingCallPopUpActivity extends Activity implements OnClickListener{
+public class IncomingCallPopUpActivity extends Activity implements
+		OnClickListener {
 
-    private long fromUserId;
-    private long chId;
+	private static final String API_TAG = "IncomingCallPopUpActivity";
+	private long fromUserId;
+	private long chId;
 
-    // private EditText introduceEditText;
+	// private EditText introduceEditText;
 
-    private ImageView userImageView;
+	private ImageView userImageView;
 
-    // private TextView usernameTextView;
-    // private TextView placeTextView;
-    // private TextView userAgaeTextView;
-    // private TextView relationTextView;
+	// private TextView usernameTextView;
+	// private TextView placeTextView;
+	// private TextView userAgaeTextView;
+	// private TextView relationTextView;
 
-    private Button declineButton;
-    private Button acceptButton;
+	private Button declineButton;
+	private Button acceptButton;
 
-    // private TextView tag1_textvw;
-    // private TextView tag2_textvw;
+	// private TextView tag1_textvw;
+	// private TextView tag2_textvw;
 
-    private GCMResponse gcmResponse;
+	private GCMResponse gcmResponse;
 
-    private CallDetail callDetail;
+	private CallDetail callDetail;
 
-    private String friendAddress;
+	private String friendAddress;
 
-    private int friendOnlineStatus;
+	private int friendOnlineStatus;
 
-    private Intent stopRingIntent;
-    private static Handler missCallHandler;
+	private Intent stopRingIntent;
+	private static Handler missCallHandler;
 
-    private Intent incomingCallPopUpScreenViewIntent;
+	private Intent incomingCallPopUpScreenViewIntent;
 
-    private TextView friendNameTextView;
+	private TextView friendNameTextView;
 
-    //
-    // private LinearLayout tags_ln_lyout;
-    // private RelativeLayout tag1_rl_lyout;
-    // private RelativeLayout tag2_rl_lyout;
-    // private ImageView tag1_imgvw;
-    // private ImageView tag2_imgvw;
+	//
+	// private LinearLayout tags_ln_lyout;
+	// private RelativeLayout tag1_rl_lyout;
+	// private RelativeLayout tag2_rl_lyout;
+	// private ImageView tag1_imgvw;
+	// private ImageView tag2_imgvw;
 
-    /**
-     * Initializes the activity, manages the listeners of the UI components, get
-     * data from the intent and initializes receivers and handlers.
-     */
-    @Override
-    protected void onCreate(Bundle arg0) {
-        super.onCreate(arg0);
-        setContentView(R.layout.activity_incoming_call_popup);
-        getDataFromBundle();
-        initViewControls();
-     
-        getCallDetails();
-        initializeGcmResponseHandler();
-        initializeReceiverIntent();
-        manageScreenKeepOn();
-        incomingCallPopUpScreenViewIntent = new Intent(
-                AppConstant.getCallPopUpViewActionBroadCastAction());
+	/**
+	 * Initializes the activity, manages the listeners of the UI components, get
+	 * data from the intent and initializes receivers and handlers.
+	 */
+	@Override
+	protected void onCreate(Bundle arg0) {
+		super.onCreate(arg0);
+		setContentView(R.layout.activity_incoming_call_popup);
+		getDataFromBundle();
+		initViewControls();
 
-        registerReceiver(
-                finishIncomgCallPopScreenViewReceiver,
-                new IntentFilter(AppConstant
-                        .getCallPopUpViewActionBroadCastAction()));
+		getCallDetails();
+		initializeGcmResponseHandler();
+		initializeReceiverIntent();
+		manageScreenKeepOn();
+		incomingCallPopUpScreenViewIntent = new Intent(
+				AppConstant.getCallPopUpViewActionBroadCastAction());
 
-    }
+		registerReceiver(
+				finishIncomgCallPopScreenViewReceiver,
+				new IntentFilter(AppConstant
+						.getCallPopUpViewActionBroadCastAction()));
 
-    /**
-     * Method to manage screen keep on.
-     */
-    private void manageScreenKeepOn() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-    }
+	}
 
-    /**
-     * Starts the Flurry agent session.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
+	/**
+	 * Method to manage screen keep on.
+	 */
+	private void manageScreenKeepOn() {
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+	}
 
-    /**
-     * Stops the Flurry agent session.
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
+	/**
+	 * Starts the Flurry agent session.
+	 */
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
 
-    /**
-     * Receiver to finish the incoming call pop up.
-     */
-    private BroadcastReceiver finishIncomgCallPopScreenViewReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                IncomingCallPopUpActivity.this.finish();
+	/**
+	 * Stops the Flurry agent session.
+	 */
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+	/**
+	 * Receiver to finish the incoming call pop up.
+	 */
+	private BroadcastReceiver finishIncomgCallPopScreenViewReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			try {
+				IncomingCallPopUpActivity.this.finish();
 
-    /**
-     * Method to initialize the receiver to stop the ringtone.
-     */
-    private void initializeReceiverIntent() {
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	};
 
-        stopRingIntent = new Intent(AppConstant.getStopRingBroadCastAction());
+	/**
+	 * Method to initialize the receiver to stop the ringtone.
+	 */
+	private void initializeReceiverIntent() {
 
-    }
+		stopRingIntent = new Intent(AppConstant.getStopRingBroadCastAction());
 
-    /**
-     * Method to make an api call to get the call details.
-     */
-    private void getCallDetails() {
+	}
 
-        // TODO write sdcard log for calling flow:
+	/**
+	 * Method to make an api call to get the call details.
+	 */
+	private void getCallDetails() {
 
-        System.out.println(" get call details api.");
+		// TODO write sdcard log for calling flow:
 
-        // TODO :: call detail here api
-        
-//             caller = WeCamApiClient.getClient();
-//        String[] ids = gcmResponse.getIds().split(",");
-//        fromUserId = Long.parseLong(ids[0]);
-//        chId = Long.parseLong(ids[1]);
-//
-//        CallDetailInput input = new CallDetailInput(fromUserId, "1", chId,
-//                new PreferenceKeeper(this).getUserId(), new PreferenceKeeper(
-//                        this).getToken());
-//
-//        caller.get(IncomingCallPopUpActivity.this, 1,
-//                WeCam_URLS.WC_CALLING_DETAIL_URL, false, input,
-//                new CallDetailOutput(), API_NAME.callDetail, true);
-    }
+		System.out.println(" get call details api.");
 
-    /**
-     * Method to get data from the intent
-     */
-    private void getDataFromBundle() {
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            gcmResponse = bundle.getParcelable(INTENT_EXTRAS.GCM_RESPONSE);
-        }
-    }
+		// TODO :: call detail here api
 
-    /**
-     * method to initialize the UI
-     */
-    private void initViewControls() {
-        declineButton = (Button) findViewById(R.id.activity_incoming_call_pop_up_decline_btn);
-        declineButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
-        acceptButton = (Button) findViewById(R.id.activity_incoming_call_pop_up_accept_btn);
-        acceptButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
-        friendNameTextView = (TextView) findViewById(R.id.activity_incoming_call_pop_up_frnd_name_texview);
+		// caller = WeCamApiClient.getClient();
+		String[] ids = gcmResponse.getIds().split(",");
+		fromUserId = Long.parseLong(ids[0]);
+		chId = Long.parseLong(ids[1]);
 
-        // introduceEditText = (EditText)
-        // findViewById(R.id.activity_incoming_call_pop_up_introduce_mssg_edit_text);
+		// CallDetailInput input = new CallDetailInput(fromUserId, "1", chId,
+		// new PreferenceKeeper(this).getUserId(), new PreferenceKeeper(
+		// this).getToken());
+		//
+		// caller.get(IncomingCallPopUpActivity.this, 1,
+		// WeCam_URLS.WC_CALLING_DETAIL_URL, false, input,
+		// new CallDetailOutput(), API_NAME.callDetail, true);
+		//
 
-        // usernameTextView = (TextView)
-        // findViewById(R.id.activity_incoming_call_pop_up_user_name_textview);
-        // placeTextView = (TextView)
-        // findViewById(R.id.activity_incoming_call_pop_up_place_textview);
-        // userAgaeTextView = (TextView)
-        // findViewById(R.id.activity_incoming_call_pop_up_user_age_textview);
-        // relationTextView = (TextView)
-        // findViewById(R.id.activity_incoming_call_pop_up_user_relationship_status_textview);
-        userImageView = (ImageView) findViewById(R.id.activity_incoming_call_pop_up_user_imageview);
-        declineButton.setOnClickListener(this);
-        acceptButton.setOnClickListener(this);
-        // tag1_textvw = (TextView) findViewById(R.id.tag1_textvw);
-        // tag2_textvw = (TextView) findViewById(R.id.tag2_textvw);
-        // tags_ln_lyout = (LinearLayout) findViewById(R.id.tags_ln_lyout);
-        // tag1_rl_lyout = (RelativeLayout) findViewById(R.id.tag1_rl_lyout);
-        // tag2_rl_lyout = (RelativeLayout) findViewById(R.id.tag2_rl_lyout);
-        // tag1_imgvw = (ImageView) findViewById(R.id.tag1_imgvw);
-        // tag2_imgvw = (ImageView) findViewById(R.id.tag2_imgvw);
-    }
+		PreferenceKeeper keeper = new PreferenceKeeper(this);
 
-    /**
-     * method to set the on click listeners
-     */
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-        case R.id.activity_incoming_call_pop_up_decline_btn:
-            sendBroadcast(stopRingIntent);
-            rejectCall();
-            break;
+		AppRestClient.getClient().sendRequest(
+				AppRequestBuilder.callDtl(fromUserId, "1", "" + chId, keeper
+						.getUserInfo().getId(),
+						AppConstant.OPEN_TOK_API_SECRET, "1",
+						new AppResponseListener<CallDetail>(CallDetail.class,
+								IncomingCallPopUpActivity.this) {
 
-        case R.id.activity_incoming_call_pop_up_accept_btn:
-            sendBroadcast(stopRingIntent);
-            acceptCall();
-            break;
+							@Override
+							public void onSuccess(CallDetail callDetail,
+									Long serverTime) {
 
-        default:
-            break;
-        }
-    }
+								IncomingCallPopUpActivity.this.callDetail = callDetail;
+								if (callDetail.getCs().equalsIgnoreCase("OK")) {
+									manageUI(callDetail);
+								} else {
+									showToast(callDetail.getCsMsg());
+								}
+							}
 
-    /**
-     * Method to invoke the accept call api.
-     */
-    private void acceptCall() {
+							@Override
+							public void onError(ErrorObject error) {
+								// TODO Auto-generated method stub
+								showToast(error.getErrorMessage());
+							}
+						}), API_TAG);
 
-        try {
-            // TODO write sdcard log for calling flow:
+	}
 
-            System.out.println(" accept call api calling.");
+	/**
+	 * Method to get data from the intent
+	 */
+	private void getDataFromBundle() {
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			gcmResponse = bundle.getParcelable(INTENT_EXTRAS.GCM_RESPONSE);
+		}
+	}
 
-            // callLog("", "accept call ", "started");
+	/**
+	 * method to initialize the UI
+	 */
+	private void initViewControls() {
+		declineButton = (Button) findViewById(R.id.activity_incoming_call_pop_up_decline_btn);
+		declineButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
+		acceptButton = (Button) findViewById(R.id.activity_incoming_call_pop_up_accept_btn);
+		acceptButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
+		friendNameTextView = (TextView) findViewById(R.id.activity_incoming_call_pop_up_frnd_name_texview);
 
-//            showProgressBar();
-//
-//            AcceptCallInput input = new AcceptCallInput(keeper.getUserId(),
-//                    fromUserId, callDetail.getsId(), getDeviceId(),
-//                    callDetail.getChId(), new PreferenceKeeper(this).getToken());
-//
-//            caller.get(IncomingCallPopUpActivity.this, 1,
-//                    WeCam_URLS.WC_CALL_ACCEPT_URL, false, input,
-//                    new AcceptCallOutput(), API_NAME.callAccept, true);
+		// introduceEditText = (EditText)
+		// findViewById(R.id.activity_incoming_call_pop_up_introduce_mssg_edit_text);
 
-            // TODO :: call accept api
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		// usernameTextView = (TextView)
+		// findViewById(R.id.activity_incoming_call_pop_up_user_name_textview);
+		// placeTextView = (TextView)
+		// findViewById(R.id.activity_incoming_call_pop_up_place_textview);
+		// userAgaeTextView = (TextView)
+		// findViewById(R.id.activity_incoming_call_pop_up_user_age_textview);
+		// relationTextView = (TextView)
+		// findViewById(R.id.activity_incoming_call_pop_up_user_relationship_status_textview);
+		userImageView = (ImageView) findViewById(R.id.activity_incoming_call_pop_up_user_imageview);
+		declineButton.setOnClickListener(this);
+		acceptButton.setOnClickListener(this);
+		// tag1_textvw = (TextView) findViewById(R.id.tag1_textvw);
+		// tag2_textvw = (TextView) findViewById(R.id.tag2_textvw);
+		// tags_ln_lyout = (LinearLayout) findViewById(R.id.tags_ln_lyout);
+		// tag1_rl_lyout = (RelativeLayout) findViewById(R.id.tag1_rl_lyout);
+		// tag2_rl_lyout = (RelativeLayout) findViewById(R.id.tag2_rl_lyout);
+		// tag1_imgvw = (ImageView) findViewById(R.id.tag1_imgvw);
+		// tag2_imgvw = (ImageView) findViewById(R.id.tag2_imgvw);
+	}
 
-    }
+	/**
+	 * method to set the on click listeners
+	 */
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.activity_incoming_call_pop_up_decline_btn:
+			sendBroadcast(stopRingIntent);
+			rejectCall();
+			break;
 
-    /**
-     * Method to invoke the reject call api.
-     */
-    private void rejectCall() {
+		case R.id.activity_incoming_call_pop_up_accept_btn:
+			sendBroadcast(stopRingIntent);
+			acceptCall();
+			break;
 
-        // TODO write sdcard log for calling flow:
+		default:
+			break;
+		}
+	}
 
-        // callLog("", "reject call", "started");
-//        showProgressBar();
-//
-//        PreferenceKeeper keeper = new PreferenceKeeper(this);
-//
-//        RejectCallInput input = new RejectCallInput(fromUserId,
-//                keeper.getUserId(), callDetail.getChId(), callDetail.getsId(),
-//                keeper.getUserId(), keeper.getToken(), getDeviceId());
-//
-//        caller.get(IncomingCallPopUpActivity.this, 1,
-//                WeCam_URLS.WC_CALL_REJECT_URL, false, input,
-//                new AcceptCallOutput(), API_NAME.callReject, true);
+	/**
+	 * Method to invoke the accept call api.
+	 */
+	private void acceptCall() {
 
-    	// TODO :: reject call
-    	
-        finish();
-    }
+		try {
+			// TODO write sdcard log for calling flow:
 
-    /**
-     * This method handles the api call response in case the response status is
-     * success.
-     */
-//    @Override
-//    public void apiSuccessResult(int reqId, ApiOutput output, API_NAME type) {
-//        super.apiSuccessResult(reqId, output, type);
-//        switch (type) {
-//        case callDetail:
-//
-//            hideProgressBar();
-//            callDetail = ((CallDetailOutput) output).getCallDetail();
-//            if (callDetail.getCs().equalsIgnoreCase("OK")) {
-//
-//                manageUI(callDetail);
-//
-//                // TODO write sdcard log for calling flow:
-//                //
-//                // showToastMessage("Call Detail : Success ", true);
-//                // callLog("" + callDetail.getChId(), "api/wccDtl",
-//                // "Call Detail : Success ", "caller");
-//
-//            } else {
-//
-//                // TODO write sdcard log for calling flow:
-//
-//                // showToastMessage("Call Detail : Failed ", true);
-//                //
-//                // callLog("", "api/wccDtl", "Call Detail : Failed ", "caller");
-//
-//                showSingleButtonDialog("", callDetail.getCsMsg(),
-//                        getString(R.string.ok),
-//                        IAppConstant.DialogConstant.MAKE_CALL_FAILED_RESPONSE);
-//
-//            }
-//
-//            break;
-//
-//        case callAccept:
-//            hideProgressBar();
-//            AcceptCallOutput acceptCallOutput = (AcceptCallOutput) output;
-//
-//            if (acceptCallOutput.getCs().equalsIgnoreCase("OK")) {
-//
-//                // TODO write sdcard log for calling flow:
-//
-//                // showToastMessage("Call Accept : Success ", true);
-//                //
-//                // callLog("" + callDetail.getChId(), "api/wccAccept",
-//                // acceptCallOutput.toString(), "calle");
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putParcelable(INTENT_EXTRAS.CALL_DETAIL, callDetail);
-//                bundle.putString(INTENT_EXTRAS.FRIEND_NAME, callDetail
-//                        .getUserProfile().getNm());
-//                bundle.putString(INTENT_EXTRAS.FRIEND_ADDRESS, friendAddress);
-//                bundle.putInt(INTENT_EXTRAS.FRIEND_ONLINE_STATUS,
-//                        friendOnlineStatus);
-//                startActivity(CallActivity.class, bundle);
-//                finish();
-//
-//                mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_SUCESS, null);
-//            } else {
-//
-//                // TODO write sdcard log for calling flow:
-//
-//                // showToastMessage("Call Accept : Failed ", true);
-//                //
-//                // callLog("" + callDetail.getChId(), "api/wccAccept",
-//                // "Call Accept : Failed ", "calle");
-//
-//                showToastMessage(acceptCallOutput.getCsMsg(), false);
-//
-//                mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_FAILURE,
-//                        null);
-//            }
-//
-//            mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_SUCESS, null);
-//
-//            break;
-//        case callReject:
-//            AcceptCallOutput callRejectOutput = (AcceptCallOutput) output;
-//
-//            if (callRejectOutput != null
-//                    && !callRejectOutput.getCs().equalsIgnoreCase("OK")) {
-//                showToastMessage(callRejectOutput.getCsMsg(), false);
-//
-//                // TODO write sdcard log for calling flow:
-//
-//                // showToastMessage("Call Reject : Success ", true);
-//                //
-//                // callLog("" + callDetail.getChId(), "api/wccReject",
-//                // callRejectOutput.toString(), "calle");
-//
-//            }
-//
-//            hideProgressBar();
-//
-//            startActivityWithClearTop(LoginAnimationActivity.class);
-//            finish();
-//            mixpanel.track(MixPanelConstant.MAKING_CALL_DECLINE_SUCESS, null);
-//            break;
-//
-//        default:
-//            break;
-//        }
-//
-//    }
+			System.out.println(" accept call api calling.");
 
-    /**
-     * Method to set details in the incoming call pop based on the received
-     * callDetail response
-     * 
-     * @param callDetail1
-     */
-    private void manageUI(CallDetail callDetail1) {
-//        UserProfile userProfile = callDetail1.getUserProfile();
-//        if (userProfile == null) {
-//            return;
-//        } else {
-            // friendOnlineStatus = userProfile.getWs();
-            // String friendName = userProfile.getNm();
-            // friendAddress = userProfile.getLoc();
+			// callLog("", "accept call ", "started");
 
-            friendNameTextView.setText("TEST USER");
+			// showProgressBar();
+			//
+			// AcceptCallInput input = new AcceptCallInput(keeper.getUserId(),
+			// fromUserId, callDetail.getsId(), getDeviceId(),
+			// callDetail.getChId(), new PreferenceKeeper(this).getToken());
+			//
+			// caller.get(IncomingCallPopUpActivity.this, 1,
+			// WeCam_URLS.WC_CALL_ACCEPT_URL, false, input,
+			// new AcceptCallOutput(), API_NAME.callAccept, true);
 
-//            imageLoader.displayImage(userProfile.getImg(), userImageView,
-//                    userImageUploadOptions);
+			// TODO :: call accept api
 
-//        }
+			PreferenceKeeper keeper = new PreferenceKeeper(this);
 
-    }
+			AppRestClient.getClient().sendRequest(
+					AppRequestBuilder.accept("" + keeper.getUserInfo().getId(),
+							"" + fromUserId, callDetail.getsId(),
+							getDeviceId(), "" + chId,
+							AppConstant.OPEN_TOK_API_SECRET, "1",
+							new AppResponseListener<AcceptCallOutput>(
+									AcceptCallOutput.class,
+									IncomingCallPopUpActivity.this) {
 
-    /**
-     * This method handles the api call response in case the response status is
-     * failure.
-     */
-//    @Override
-//    public void apiFailureResult(int reqId, ErrorObject error, API_NAME type) {
-//        super.apiFailureResult(reqId, error, type);
-//
-//        switch (type) {
-//        case callDetail:
-//            hideProgressBar();
-//            showSingleButtonDialog("", error.getErrorMessage(),
-//                    getString(R.string.ok), -1);
-//
-//            // TODO write sdcard log for calling flow:
-//
-//            // showToastMessage("Call Detail : Failed ", true);
-//            //
-//            // callLog("", "api/wccDetail", "Call Detail : Failed ", "calle");
-//
-//            break;
-//        case callAccept:
-//            hideProgressBar();
-//            showToastMessage(getString(R.string.call_api_failed_msg), false);
-//
-//            mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_FAILURE, null);
-//
-//            // showToastMessage("Call Accept : Failed ", true);
-//            //
-//            // callLog("" + callDetail.getChId(), "api/wccAccept",
-//            // "Call Accept : Failed ", "calle");
-//
-//            break;
-//        case callReject:
-//            // TODO write sdcard log for calling flow:
-//
-//            // showToastMessage("Call Reject : Failed ", true);
-//            //
-//            // callLog("" + callDetail.getChId(), "api/wccReject",
-//            // "Call Reject : Failed ", "calle");
-//
-//            hideProgressBar();
-//            startActivityWithClearTop(LoginAnimationActivity.class);
-//            finish();
-//
-//            mixpanel.track(MixPanelConstant.MAKING_CALL_DECLINE_FAILURE, null);
-//            break;
-//
-//        default:
-//            break;
-//        }
-//    }
+								@Override
+								public void onSuccess(
+										AcceptCallOutput callOutput,
+										Long serverTime) {
 
-    /**
-     * Method to handle the GCM response for the missed call.
-     */
-    private void initializeGcmResponseHandler() {
-        if (missCallHandler == null) {
-            missCallHandler = new Handler(new Handler.Callback() {
-                @Override
-                public boolean handleMessage(Message msg) {
+									if (callOutput.getCs().equalsIgnoreCase(
+											"OK")) {
 
-                    GCMResponse gcmResponse = ((GCMResponse) msg.obj);
+										Bundle bundle = new Bundle();
+										bundle.putParcelable(
+												INTENT_EXTRAS.CALL_DETAIL,
+												callDetail);
+										bundle.putString(
+												INTENT_EXTRAS.FRIEND_NAME,
+												gcmResponse.getMessage());
+										bundle.putString(
+												INTENT_EXTRAS.FRIEND_ADDRESS,
+												friendAddress);
+										bundle.putInt(
+												INTENT_EXTRAS.FRIEND_ONLINE_STATUS,
+												friendOnlineStatus);
 
-                    int response = gcmResponse.getAkey();
-                    switch (response) {
-                    case 11:
-                    case 12:
-                    case 16:
-                        showToast(gcmResponse.getMessage());
-                        sendBroadcast(incomingCallPopUpScreenViewIntent);
-                        break;
-                    default:
-                        break;
-                    }
-                    return false;
-                }
+										Intent intent = new Intent(
+												IncomingCallPopUpActivity.this,
+												CallActivity.class);
+										intent.putExtras(bundle);
+										startActivity(intent);
+										finish();
+									} else {
+										showToast(callOutput.getCsMsg());
+									}
 
-            });
-        }
-    }
+								}
 
-    /**
-     * Returns the instance of miss call handler.
-     * 
-     * @return
-     */
-    public static Handler getMissCallHandler() {
-        return missCallHandler;
-    }
+								@Override
+								public void onError(ErrorObject error) {
+									// TODO Auto-generated method stub
+									showToast(error.getErrorMessage());
+								}
+							}), API_TAG);
 
-    /**
-     * Unregisters the receiver when this activity destroys.
-     */
-    @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        unregisterReceiver(finishIncomgCallPopScreenViewReceiver);
-    }
+	}
 
-    /**
-     * Takes confirmation to end the call on pressing back button from the
-     * device.
-     */
-    @Override
-    public void onBackPressed() {
-        showDoubleButtonDialog("", getString(R.string.leave_call_confirmation),
-                getString(R.string.yes), getString(R.string.no),
-                AppConstant.DialogConstant.EXIT_FROM_END_CALL_SCREEN_ACTION);
-    }
+	/**
+	 * Method to invoke the reject call api.
+	 */
+	private void rejectCall() {
 
+		// TODO write sdcard log for calling flow:
+
+		// callLog("", "reject call", "started");
+		// showProgressBar();
+		//
+		// PreferenceKeeper keeper = new PreferenceKeeper(this);
+		//
+		// RejectCallInput input = new RejectCallInput(fromUserId,
+		// keeper.getUserId(), callDetail.getChId(), callDetail.getsId(),
+		// keeper.getUserId(), keeper.getToken(), getDeviceId());
+		//
+		// caller.get(IncomingCallPopUpActivity.this, 1,
+		// WeCam_URLS.WC_CALL_REJECT_URL, false, input,
+		// new AcceptCallOutput(), API_NAME.callReject, true);
+
+		// TODO :: reject call
+
+		PreferenceKeeper keeper = new PreferenceKeeper(this);
+
+		AppRestClient.getClient().sendRequest(
+				AppRequestBuilder.callReject(""+keeper.getUserInfo().getId(),
+						""+fromUserId, ""+keeper.getUserInfo().getId(), callDetail
+								.getsId(), ""+callDetail.getChId(), getDeviceId(),
+						AppConstant.OPEN_TOK_API_SECRET, "1",
+						new AppResponseListener<AcceptCallOutput>(
+								AcceptCallOutput.class,
+								IncomingCallPopUpActivity.this) {
+
+							@Override
+							public void onSuccess(AcceptCallOutput callRejectOutput,
+									Long serverTime) {
+								if (callRejectOutput != null
+										&& !callRejectOutput.getCs()
+												.equalsIgnoreCase("OK")) {
+									showToast(callRejectOutput.getCsMsg());
+
+								}
+							}
+
+							@Override
+							public void onError(ErrorObject error) {
+								// TODO Auto-generated method stub
+								showToast(error.getErrorMessage());
+							}
+						}), API_TAG);
+
+		finish();
+	}
+
+	/**
+	 * This method handles the api call response in case the response status is
+	 * success.
+	 */
+	// @Override
+	// public void apiSuccessResult(int reqId, ApiOutput output, API_NAME type)
+	// {
+	// super.apiSuccessResult(reqId, output, type);
+	// switch (type) {
+	// case callDetail:
+	//
+	// hideProgressBar();
+	// callDetail = ((CallDetailOutput) output).getCallDetail();
+	// if (callDetail.getCs().equalsIgnoreCase("OK")) {
+	//
+	// manageUI(callDetail);
+	//
+	// // TODO write sdcard log for calling flow:
+	// //
+	// // showToastMessage("Call Detail : Success ", true);
+	// // callLog("" + callDetail.getChId(), "api/wccDtl",
+	// // "Call Detail : Success ", "caller");
+	//
+	// } else {
+	//
+	// // TODO write sdcard log for calling flow:
+	//
+	// // showToastMessage("Call Detail : Failed ", true);
+	// //
+	// // callLog("", "api/wccDtl", "Call Detail : Failed ", "caller");
+	//
+	// showSingleButtonDialog("", callDetail.getCsMsg(),
+	// getString(R.string.ok),
+	// IAppConstant.DialogConstant.MAKE_CALL_FAILED_RESPONSE);
+	//
+	// }
+	//
+	// break;
+	//
+	// case callAccept:
+	// hideProgressBar();
+	// AcceptCallOutput acceptCallOutput = (AcceptCallOutput) output;
+	//
+	// if (acceptCallOutput.getCs().equalsIgnoreCase("OK")) {
+	//
+	// // TODO write sdcard log for calling flow:
+	//
+	// // showToastMessage("Call Accept : Success ", true);
+	// //
+	// // callLog("" + callDetail.getChId(), "api/wccAccept",
+	// // acceptCallOutput.toString(), "calle");
+	//
+	// Bundle bundle = new Bundle();
+	// bundle.putParcelable(INTENT_EXTRAS.CALL_DETAIL, callDetail);
+	// bundle.putString(INTENT_EXTRAS.FRIEND_NAME, callDetail
+	// .getUserProfile().getNm());
+	// bundle.putString(INTENT_EXTRAS.FRIEND_ADDRESS, friendAddress);
+	// bundle.putInt(INTENT_EXTRAS.FRIEND_ONLINE_STATUS,
+	// friendOnlineStatus);
+	// startActivity(CallActivity.class, bundle);
+	// finish();
+	//
+	// mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_SUCESS, null);
+	// } else {
+	//
+	// // TODO write sdcard log for calling flow:
+	//
+	// // showToastMessage("Call Accept : Failed ", true);
+	// //
+	// // callLog("" + callDetail.getChId(), "api/wccAccept",
+	// // "Call Accept : Failed ", "calle");
+	//
+	// showToastMessage(acceptCallOutput.getCsMsg(), false);
+	//
+	// mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_FAILURE,
+	// null);
+	// }
+	//
+	// mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_SUCESS, null);
+	//
+	// break;
+	// case callReject:
+	// AcceptCallOutput callRejectOutput = (AcceptCallOutput) output;
+	//
+	// if (callRejectOutput != null
+	// && !callRejectOutput.getCs().equalsIgnoreCase("OK")) {
+	// showToastMessage(callRejectOutput.getCsMsg(), false);
+	//
+	// // TODO write sdcard log for calling flow:
+	//
+	// // showToastMessage("Call Reject : Success ", true);
+	// //
+	// // callLog("" + callDetail.getChId(), "api/wccReject",
+	// // callRejectOutput.toString(), "calle");
+	//
+	// }
+	//
+	// hideProgressBar();
+	//
+	// startActivityWithClearTop(LoginAnimationActivity.class);
+	// finish();
+	// mixpanel.track(MixPanelConstant.MAKING_CALL_DECLINE_SUCESS, null);
+	// break;
+	//
+	// default:
+	// break;
+	// }
+	//
+	// }
+
+	/**
+	 * Method to set details in the incoming call pop based on the received
+	 * callDetail response
+	 * 
+	 * @param callDetail1
+	 */
+	private void manageUI(CallDetail callDetail1) {
+		// UserProfile userProfile = callDetail1.getUserProfile();
+		// if (userProfile == null) {
+		// return;
+		// } else {
+		// friendOnlineStatus = userProfile.getWs();
+		// String friendName = userProfile.getNm();
+		// friendAddress = userProfile.getLoc();
+
+		friendNameTextView.setText("TEST USER");
+
+		// imageLoader.displayImage(userProfile.getImg(), userImageView,
+		// userImageUploadOptions);
+
+		// }
+
+	}
+
+	/**
+	 * This method handles the api call response in case the response status is
+	 * failure.
+	 */
+	// @Override
+	// public void apiFailureResult(int reqId, ErrorObject error, API_NAME type)
+	// {
+	// super.apiFailureResult(reqId, error, type);
+	//
+	// switch (type) {
+	// case callDetail:
+	// hideProgressBar();
+	// showSingleButtonDialog("", error.getErrorMessage(),
+	// getString(R.string.ok), -1);
+	//
+	// // TODO write sdcard log for calling flow:
+	//
+	// // showToastMessage("Call Detail : Failed ", true);
+	// //
+	// // callLog("", "api/wccDetail", "Call Detail : Failed ", "calle");
+	//
+	// break;
+	// case callAccept:
+	// hideProgressBar();
+	// showToastMessage(getString(R.string.call_api_failed_msg), false);
+	//
+	// mixpanel.track(MixPanelConstant.MAKING_CALL_ACCEPT_FAILURE, null);
+	//
+	// // showToastMessage("Call Accept : Failed ", true);
+	// //
+	// // callLog("" + callDetail.getChId(), "api/wccAccept",
+	// // "Call Accept : Failed ", "calle");
+	//
+	// break;
+	// case callReject:
+	// // TODO write sdcard log for calling flow:
+	//
+	// // showToastMessage("Call Reject : Failed ", true);
+	// //
+	// // callLog("" + callDetail.getChId(), "api/wccReject",
+	// // "Call Reject : Failed ", "calle");
+	//
+	// hideProgressBar();
+	// startActivityWithClearTop(LoginAnimationActivity.class);
+	// finish();
+	//
+	// mixpanel.track(MixPanelConstant.MAKING_CALL_DECLINE_FAILURE, null);
+	// break;
+	//
+	// default:
+	// break;
+	// }
+	// }
+
+	/**
+	 * Method to handle the GCM response for the missed call.
+	 */
+	private void initializeGcmResponseHandler() {
+		if (missCallHandler == null) {
+			missCallHandler = new Handler(new Handler.Callback() {
+				@Override
+				public boolean handleMessage(Message msg) {
+
+					GCMResponse gcmResponse = ((GCMResponse) msg.obj);
+
+					int response = gcmResponse.getAkey();
+					switch (response) {
+					case 11:
+					case 12:
+					case 16:
+						showToast(gcmResponse.getMessage());
+						sendBroadcast(incomingCallPopUpScreenViewIntent);
+						break;
+					default:
+						break;
+					}
+					return false;
+				}
+
+			});
+		}
+	}
+
+	/**
+	 * Returns the instance of miss call handler.
+	 * 
+	 * @return
+	 */
+	public static Handler getMissCallHandler() {
+		return missCallHandler;
+	}
+
+	/**
+	 * Unregisters the receiver when this activity destroys.
+	 */
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+
+		unregisterReceiver(finishIncomgCallPopScreenViewReceiver);
+	}
+
+	/**
+	 * Takes confirmation to end the call on pressing back button from the
+	 * device.
+	 */
+	@Override
+	public void onBackPressed() {
+		showDoubleButtonDialog("", getString(R.string.leave_call_confirmation),
+				getString(R.string.yes), getString(R.string.no),
+				AppConstant.DialogConstant.EXIT_FROM_END_CALL_SCREEN_ACTION);
+	}
 
 	private void showToast(String msg) {
 		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
-
 
 	public void showDoubleButtonDialog(final String title,
 			final String message, final String positiveButtonText,
@@ -583,6 +702,20 @@ public class IncomingCallPopUpActivity extends Activity implements OnClickListen
 
 	protected void singleButtonDialogClicked(int type) {
 		finish();
+
+	}
+
+	public String getDeviceId() {
+		String deviceId = ((TelephonyManager) IncomingCallPopUpActivity.this
+				.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+		if (deviceId != null && !deviceId.equalsIgnoreCase("null")) {
+			// System.out.println("imei number :: " + deviceId);
+			return deviceId;
+		}
+
+		deviceId = android.os.Build.SERIAL;
+		// System.out.println("serial id :: " + deviceId);
+		return deviceId;
 
 	}
 
