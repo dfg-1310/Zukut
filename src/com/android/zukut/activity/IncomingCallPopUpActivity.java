@@ -13,6 +13,7 @@ import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,15 +25,12 @@ import com.android.zukut.api.op.ErrorObject;
 import com.android.zukut.bo.AcceptCallOutput;
 import com.android.zukut.bo.CallDetail;
 import com.android.zukut.bo.GCMResponse;
-import com.android.zukut.bo.User;
 import com.android.zukut.httpClient.AppRequestBuilder;
 import com.android.zukut.httpClient.AppResponseListener;
 import com.android.zukut.httpClient.AppRestClient;
 import com.android.zukut.util.AppConstant;
-import com.android.zukut.util.AppConstant.FontFace;
 import com.android.zukut.util.AppConstant.INTENT_EXTRAS;
 import com.android.zukut.util.PreferenceKeeper;
-import com.android.zukut.util.Utils;
 
 /**
  * Class is used to show incoming call pop-up.
@@ -184,7 +182,7 @@ public class IncomingCallPopUpActivity extends Activity implements
 		PreferenceKeeper keeper = new PreferenceKeeper(this);
 
 		AppRestClient.getClient().sendRequest(
-				AppRequestBuilder.callDtl(fromUserId, "1", "" + chId, keeper
+				AppRequestBuilder.callDtl(fromUserId, 0, "" + chId, keeper
 						.getUserInfo().getId(),
 						AppConstant.OPEN_TOK_API_SECRET, "1",
 						new AppResponseListener<CallDetail>(CallDetail.class,
@@ -226,9 +224,9 @@ public class IncomingCallPopUpActivity extends Activity implements
 	 */
 	private void initViewControls() {
 		declineButton = (Button) findViewById(R.id.activity_incoming_call_pop_up_decline_btn);
-		declineButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
+//		declineButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
 		acceptButton = (Button) findViewById(R.id.activity_incoming_call_pop_up_accept_btn);
-		acceptButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
+//		acceptButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
 		friendNameTextView = (TextView) findViewById(R.id.activity_incoming_call_pop_up_frnd_name_texview);
 
 		// introduceEditText = (EditText)
@@ -536,7 +534,7 @@ public class IncomingCallPopUpActivity extends Activity implements
 		// String friendName = userProfile.getNm();
 		// friendAddress = userProfile.getLoc();
 
-		friendNameTextView.setText("TEST USER");
+		friendNameTextView.setText(gcmResponse.getMessage());
 
 		// imageLoader.displayImage(userProfile.getImg(), userImageView,
 		// userImageUploadOptions);
@@ -719,4 +717,23 @@ public class IncomingCallPopUpActivity extends Activity implements
 
 	}
 
+	public void hideKeyBoard() {
+		try {
+			InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (inputManager.isAcceptingText()) {
+				inputManager.hideSoftInputFromWindow(getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		hideKeyBoard();
+		super.onResume();
+	}
+	
 }

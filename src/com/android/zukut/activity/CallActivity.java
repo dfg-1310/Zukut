@@ -37,8 +37,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -59,13 +58,11 @@ import com.android.zukut.httpClient.AppRequestBuilder;
 import com.android.zukut.httpClient.AppResponseListener;
 import com.android.zukut.httpClient.AppRestClient;
 import com.android.zukut.util.AppConstant;
-import com.android.zukut.util.AppConstant.FontFace;
 import com.android.zukut.util.AppConstant.INTENT_EXTRAS;
 import com.android.zukut.util.BlueToothClass;
 import com.android.zukut.util.CallType;
 import com.android.zukut.util.CircleVideoRenderer;
 import com.android.zukut.util.PreferenceKeeper;
-import com.android.zukut.util.Utils;
 import com.opentok.android.BaseVideoRenderer;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Publisher;
@@ -200,7 +197,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	private int count = 15;
 	// private long lastTimeStamp = System.currentTimeMillis();
 	private long lastmsgThreadId = -1;
-	private EditText mMessageEditText;
+	// private EditText mMessageEditText;
 	private String firstChatMessage;
 
 	private TextView chat_conn_status;
@@ -252,6 +249,25 @@ public class CallActivity extends Activity implements Session.SessionListener,
 
 		// startCounter();
 		manageBroadcast();
+
+		hideKeyBoard();
+	}
+
+	/**
+	 * The purpose of this method is to close keyboard.
+	 */
+
+	public void hideKeyBoard() {
+		try {
+			InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (inputManager.isAcceptingText()) {
+				inputManager.hideSoftInputFromWindow(getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void hideEndCallLayout() {
@@ -289,15 +305,15 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	 * Method to show animation while calling.
 	 */
 	private void startAnimation() {
-		moveAnimForward = AnimationUtils.loadAnimation(CallActivity.this,
-				R.anim.call_screen_forward_move_animation);
-		moveAnimForward.setAnimationListener((AnimationListener) this);
-		rightArrow.startAnimation(moveAnimForward);
-
-		moveAnimBackward = AnimationUtils.loadAnimation(CallActivity.this,
-				R.anim.call_screen_backward_move_animation);
-		moveAnimBackward.setAnimationListener((AnimationListener) this);
-		leftArrow.startAnimation(moveAnimBackward);
+		// moveAnimForward = AnimationUtils.loadAnimation(CallActivity.this,
+		// R.anim.call_screen_forward_move_animation);
+		// moveAnimForward.setAnimationListener((AnimationListener) this);
+		// rightArrow.startAnimation(moveAnimForward);
+		//
+		// moveAnimBackward = AnimationUtils.loadAnimation(CallActivity.this,
+		// R.anim.call_screen_backward_move_animation);
+		// moveAnimBackward.setAnimationListener((AnimationListener) this);
+		// leftArrow.startAnimation(moveAnimBackward);
 	}
 
 	/**
@@ -431,8 +447,8 @@ public class CallActivity extends Activity implements Session.SessionListener,
 	private void initViewControls() {
 		endCallFrameLayout = (FrameLayout) findViewById(R.id.layout_header_call_screen_end_call_layout);
 
-		((Button) findViewById(R.id.end_call)).setTypeface(Utils.getTypeface(
-				FontFace.AlteHaas, this));
+		// ((Button) findViewById(R.id.end_call)).setTypeface(Utils.getTypeface(
+		// FontFace.AlteHaas, this));
 		publisherViewContainer = (FrameLayout) findViewById(R.id.activity_call_publisherview);
 		subscribeViewBody = (RelativeLayout) findViewById(R.id.activity_wecam_body_layouts);
 		publisherView_Outer = (FrameLayout) findViewById(R.id.activity_call_publisherview_circullar_outer);
@@ -444,7 +460,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		outerRelativeLayout = (RelativeLayout) findViewById(R.id.activity_call_outerview);
 		innerRootLayout = (LinearLayout) findViewById(R.id.activity_call_inner_layout);
 
-		endCallFrameLayout.setOnClickListener(this);
+		// endCallFrameLayout.setOnClickListener(this);
 
 		// addBanner = (FrameLayout) findViewById(R.id.banner);
 
@@ -452,8 +468,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		camImageView = (ImageView) findViewById(R.id.activity_footer_call_screen_video_imageview);
 		flipCamButton = (Button) findViewById(R.id.activity_call_flip_camera_button);
 		chatImageView = (ImageView) findViewById(R.id.activity_footer_call_screen_chat_imageview);
-		// volumeButton = (Button)
-		// findViewById(R.id.activity_call_friend_volume_control_button);
+		volumeButton = (Button) findViewById(R.id.activity_call_friend_volume_control_button);
 		bodyFrameLayout = (FrameLayout) findViewById(R.id.activity_call_screen_body_layout);
 
 		callScreenLinearLayout = (LinearLayout) findViewById(R.id.activity_call_screen_layout);
@@ -1037,6 +1052,7 @@ public class CallActivity extends Activity implements Session.SessionListener,
 			showPublisherAndSubscriberView();
 			showCallScreenComponent();
 			hideEndCallLayout();
+			hideKeyBoard();
 		}
 		// if (!wakeLock.isHeld()) {
 		// wakeLock.acquire();
@@ -1350,9 +1366,11 @@ public class CallActivity extends Activity implements Session.SessionListener,
 
 		TextView callingtextTextView = (TextView) findViewById(R.id.activity_call_pop_up_calling_texview);
 		final Button endCallButton = (Button) findViewById(R.id.activity_call_pop_up_end_call_button);
-		endCallButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
+		// endCallButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas,
+		// this));
 		final Button makeCallButton = (Button) findViewById(R.id.activity_call_pop_up_make_call_button);
-		makeCallButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas, this));
+		// makeCallButton.setTypeface(Utils.getTypeface(FontFace.AlteHaas,
+		// this));
 		// final RelativeLayout
 		// messge_layout=(RelativeLayout)findViewById(R.id.activity_call_pop_up_status_layout);
 		ImageView selfImageView = (ImageView) findViewById(R.id.activity_call_pop_up_self_imageview);
@@ -1390,6 +1408,8 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		makeCallButton.setVisibility(View.GONE);
 		// messge_layout.setVisibility(View.INVISIBLE);o
 		startAnimation();
+		
+		hideKeyBoard();
 	}
 
 	/**
@@ -1412,13 +1432,12 @@ public class CallActivity extends Activity implements Session.SessionListener,
 		// finishCallScreen();
 
 		PreferenceKeeper keeper = new PreferenceKeeper(this);
-
 		AppRestClient.getClient().sendRequest(
 				AppRequestBuilder.callReject("" + keeper.getUserInfo().getId(),
 						"" + makeCall.getuId(), ""
 								+ keeper.getUserInfo().getId(), makeCall
-								.getsId(), "" + callDetail.getChId(),
-						getDeviceId(), AppConstant.OPEN_TOK_API_SECRET, "1",
+								.getsId(), "", getDeviceId(),
+						AppConstant.OPEN_TOK_API_SECRET, "1",
 						new AppResponseListener<AcceptCallOutput>(
 								AcceptCallOutput.class, CallActivity.this) {
 
@@ -2682,18 +2701,18 @@ public class CallActivity extends Activity implements Session.SessionListener,
 			callScreenTipsCount = 0;
 		}
 		inflatedOuterView(R.layout.activity_call_popup);
-		ImageView view = (ImageView) findViewById(R.id.activity_call_pop_up_tips_image);
-		if (callScreenTipsCount == 0) {
-			view.setImageResource(R.drawable.dyk_invite);
-		} else if (callScreenTipsCount == 1) {
-			view.setImageResource(R.drawable.dyk_location);
-		} else if (callScreenTipsCount == 2) {
-			view.setImageResource(R.drawable.dyk_social);
-		} else if (callScreenTipsCount == 3) {
-			view.setImageResource(R.drawable.dyk_status);
-		} else if (callScreenTipsCount == 4) {
-			view.setImageResource(R.drawable.dyk_tags);
-		}
+//		ImageView view = (ImageView) findViewById(R.id.activity_call_pop_up_tips_image);
+//		if (callScreenTipsCount == 0) {
+//			view.setImageResource(R.drawable.dyk_invite);
+//		} else if (callScreenTipsCount == 1) {
+//			view.setImageResource(R.drawable.dyk_location);
+//		} else if (callScreenTipsCount == 2) {
+//			view.setImageResource(R.drawable.dyk_social);
+//		} else if (callScreenTipsCount == 3) {
+//			view.setImageResource(R.drawable.dyk_status);
+//		} else if (callScreenTipsCount == 4) {
+//			view.setImageResource(R.drawable.dyk_tags);
+//		}
 		++callScreenTipsCount;
 		manageCallPopUpScreenControls();
 	}

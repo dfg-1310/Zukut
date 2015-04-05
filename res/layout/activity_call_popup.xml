@@ -106,14 +106,14 @@
                     </RelativeLayout>
                 </RelativeLayout>
 
-                <ImageView
+            <!--     <ImageView
                     android:id="@+id/activity_call_pop_up_tips_image"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/desc"
                     android:paddingTop="@dimen/medium_padding"
-                    android:src="@drawable/dyk_invite" />
+                    android:src="@drawable/dyk_invite" /> -->
 
                 <!--
         <Button

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.zukut.activity.ContactActivity;
 import com.android.zukut.bo.User;
 import com.android.zukut.httpClient.AppResponseListener;
 import com.android.zukut.util.UserList;
@@ -83,6 +84,7 @@ public class ContactResponseHandler extends AppResponseListener<UserList> {
 
             try {
                 User user = gson.fromJson((jsonArray.getJSONObject(index)).toString(), User.class);
+               if(user.getId() != ContactActivity.SELF_ID)
                 users.add(user);
             } catch (JsonSyntaxException e) {
                 // TODO Auto-generated catch block

@@ -48,7 +48,7 @@ public class AppRequestBuilder {
 				.addParam("appver", appver);
 	}
 
-	public static AppHttpRequest callDtl(long fromUid, String dtl, String chId,
+	public static AppHttpRequest callDtl(long fromUid, int dtl, String chId,
 			long uId, String token, String appver,
 			AppResponseListener<CallDetail> appResponseListener) {
 		return AppHttpRequest

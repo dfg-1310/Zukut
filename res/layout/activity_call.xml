@@ -129,7 +129,9 @@
                             android:id="@+id/activity_footer_call_screen_chat_imageview_layout"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/medium_padding" >
+                            android:layout_marginLeft="@dimen/medium_padding"
+                            android:visibility="invisible"
+                             >
 
                             <ImageView
                                 android:id="@+id/activity_footer_call_screen_chat_imageview"
@@ -199,7 +201,9 @@
                     android:paddingTop="5dp"
                     android:text="@string/report_user_text"
                     android:textColor="@color/white_color_code"
-                    android:textSize="11sp" >
+                    android:textSize="11sp"
+                    android:visibility="gone"
+                     >
                 </Button>
             </FrameLayout>
         </LinearLayout>

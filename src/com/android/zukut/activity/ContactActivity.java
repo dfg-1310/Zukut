@@ -3,10 +3,13 @@ package com.android.zukut.activity;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -30,6 +33,7 @@ public class ContactActivity extends Activity {
 	private static final String API_TAG = "ContactActivity";
 	private ListView listView;
 	private UserList userlist;
+	public static long SELF_ID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,9 @@ public class ContactActivity extends Activity {
 				makeCall(userlist.getUser().get(arg2));
 			}
 		});
+
+		SELF_ID = new PreferenceKeeper(ContactActivity.this).getUserInfo()
+				.getId();
 
 		getAllUsers();
 
@@ -70,27 +77,27 @@ public class ContactActivity extends Activity {
 								if (makeCall != null) {
 									if (makeCall.getCs().equalsIgnoreCase("OK")) {
 
-//										sendBroadcast(startRingIntent);
+										// sendBroadcast(startRingIntent);
 										Bundle bundle = new Bundle();
 										makeCall.setuId(user.getId());
 										bundle.putParcelable(
 												AppConstant.INTENT_EXTRAS.MAKE_CALL,
 												makeCall);
-//										bundle.putString(
-//												AppConstant.INTENT_EXTRAS.FRIEND_NAME,
-//												userProfile.getNm());
-//										bundle.putString(
-//												AppConstant.INTENT_EXTRAS.FRIEND_ADDRESS,
-//												userProfile.getLoc());
-//										bundle.putInt(
-//												AppConstant.INTENT_EXTRAS.FRIEND_ONLINE_STATUS,
-//												userProfile.getWs());
-//										bundle.putBoolean(
-//												AppConstant.INTENT_EXTRAS.IS_FRIEND,
-//												isFriend);
-//										bundle.putString(
-//												AppConstant.INTENT_EXTRAS.FRIEND_IMAGE_ID,
-//												null);
+										bundle.putString(
+												AppConstant.INTENT_EXTRAS.FRIEND_NAME,
+												user.getFullName());
+										// bundle.putString(
+										// AppConstant.INTENT_EXTRAS.FRIEND_ADDRESS,
+										// userProfile.getLoc());
+										// bundle.putInt(
+										// AppConstant.INTENT_EXTRAS.FRIEND_ONLINE_STATUS,
+										// userProfile.getWs());
+										// bundle.putBoolean(
+										// AppConstant.INTENT_EXTRAS.IS_FRIEND,
+										// isFriend);
+										// bundle.putString(
+										// AppConstant.INTENT_EXTRAS.FRIEND_IMAGE_ID,
+										// null);
 
 										Intent intent = new Intent(
 												ContactActivity.this,
@@ -149,6 +156,25 @@ public class ContactActivity extends Activity {
 
 	private void showToast(String msg) {
 		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	protected void onResume() {
+		hideKeyBoard();
+		super.onResume();
+	}
+
+	public void hideKeyBoard() {
+		try {
+			InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			if (inputManager.isAcceptingText()) {
+				inputManager.hideSoftInputFromWindow(getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

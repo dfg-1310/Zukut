@@ -63,7 +63,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/desc"
-                android:src="@drawable/dyk_invite" />
+                android:src="@drawable/dyk_invite"
+                android:visibility="gone"
+                 />
 
             <LinearLayout
                 style="@style/height_wrap_content"

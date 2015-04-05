@@ -21,7 +21,7 @@ public class GcmIntentService extends IntentService {
     private static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     static int gcmCount = 1;
-
+    
     public GcmIntentService() {
         super("GcmIntentService");
     }
