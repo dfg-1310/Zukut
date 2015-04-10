@@ -1,12 +1,16 @@
 package com.android.zukut.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.method.HideReturnsTransformationMethod;
+import android.provider.ContactsContract;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -54,7 +58,9 @@ public class ContactActivity extends Activity {
 		SELF_ID = new PreferenceKeeper(ContactActivity.this).getUserInfo()
 				.getId();
 
-		getAllUsers();
+		new SyncContact().execute();
+
+		// getAllUsers();
 
 	}
 
@@ -134,7 +140,7 @@ public class ContactActivity extends Activity {
 					@Override
 					public void onError(ErrorObject error) {
 						// TODO Auto-generated method stub
-						// showToast(error.getErrorMessage());
+						 showToast(error.getErrorMessage());
 					}
 				}), API_TAG);
 
@@ -149,9 +155,7 @@ public class ContactActivity extends Activity {
 
 	private void setDataInlist(List<User> list) {
 		UserAdapter adpAdapter = new UserAdapter(ContactActivity.this, list);
-
 		listView.setAdapter(adpAdapter);
-
 	}
 
 	private void showToast(String msg) {
@@ -175,6 +179,149 @@ public class ContactActivity extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Method is used to read device contact.
+	 * 
+	 * @return List<Friend>
+	 */
+	private List<User> readDeviceContact() {
+		List<User> friends = null;
+		User user = null;
+		ContentResolver cr = getContentResolver();
+		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
+				null, null, null);
+		String phone = "";
+		String emailContact = "";
+		String pId = "";
+		if (cur.getCount() > 0) {
+			friends = new ArrayList<User>();
+
+			while (cur.moveToNext()) {
+				phone = "";
+				emailContact = "";
+				pId = "";
+				user = new User();
+
+
+				pId = cur.getString(cur
+						.getColumnIndex(ContactsContract.Contacts._ID));
+				
+				user.setFullName(cur.getString(cur
+						.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+
+				if (Integer
+						.parseInt(cur.getString(cur
+								.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+
+					Cursor pCur = cr.query(
+							ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+							null,
+							ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+									+ " = ?", new String[] { pId }, null);
+					while (pCur.moveToNext()) {
+						if (phone.length() > 0) {
+							phone += ",";
+						}
+						phone += (pCur
+								.getString(pCur
+										.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+								.trim());
+
+						// System.out.println(" phone number :: " + phone);
+					}
+					if (phone != null && phone.length() > 0) {
+						if(phone.contains(",")){
+							phone = phone.split(",")[0];
+						}
+						user.setMobile(phone);
+					}
+					pCur.close();
+				}
+
+				if (user.getFullName() != null || user.getMobile() != null) {
+					friends.add(user);
+				}
+				
+				if(friends.size()>20){
+					return friends;
+				}
+			}
+		}
+		return friends;
+	}
+
+	private class SyncContact extends AsyncTask<Void, Void, List<User>> {
+
+		@Override
+		protected List<User> doInBackground(Void... params) {
+			List<User> users = readDeviceContact();
+
+			return users;
+		}
+
+		@Override
+		protected void onPostExecute(final List<User> result) {
+			super.onPostExecute(result);
+
+			AppRestClient.getClient().sendRequest(
+					AppRequestBuilder.syncContact(new PreferenceKeeper(
+							ContactActivity.this).getUserInfo().getId(),
+							getContact(result),
+							new ContactResponseHandler(
+									UserList.class, ContactActivity.this) {
+								@Override
+								public void onSuccess(UserList response, Long serverTime) {
+									userlist = response;
+									compareList(response, result);
+								}
+
+								@Override
+								public void onError(ErrorObject error) {
+									// TODO Auto-generated method stub
+									 showToast(error.getErrorMessage());
+								}
+							}), API_TAG);
+
+		}
+
+		protected void compareList(UserList response, List<User> result) {
+			// TODO Auto-generated method stub
+			for(User user : response.getUser()){
+				for(User user1 : result){
+					if(user.getMobile().equalsIgnoreCase(user1.getMobile())){
+						user1.setSync(true);
+						user1.setId(user.getId());
+						user.setSync(true);
+						return;
+					}
+				}
+			}
+
+			for(User user : response.getUser()){
+				if(!user.isSync()){
+					result.add(user);
+				}
+			}
+			
+			setDataInlist(result);
+		}
+
+		private String getContact(List<User> result) {
+			String contact = "";
+			for (User user : result) {
+
+				if(user.getMobile() != null && !user.getMobile().equalsIgnoreCase("")){
+				if (!contact.equalsIgnoreCase("")) {
+					contact += ",";
+				}
+				contact += user.getMobile();
+				}
+			}
+			return contact;
+		}
+
 	}
 
 }

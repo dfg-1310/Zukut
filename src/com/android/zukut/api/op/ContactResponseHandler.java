@@ -93,9 +93,7 @@ public class ContactResponseHandler extends AppResponseListener<UserList> {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
         }
-
         return users;
     }
 

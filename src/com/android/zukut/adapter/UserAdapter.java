@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.zukut.R;
 import com.android.zukut.bo.User;
 
@@ -40,6 +40,7 @@ public class UserAdapter extends BaseAdapter {
 	private class ViewHolder {
 		TextView userNameTextView;
 		TextView mobileNumberTextView;
+		LinearLayout rootLinearLayout;
 	}
 
 	@Override
@@ -57,6 +58,8 @@ public class UserAdapter extends BaseAdapter {
 			holder.userNameTextView = (TextView) convertView
 					.findViewById(R.id.username_textview);
 
+			holder.rootLinearLayout = (LinearLayout) convertView
+					.findViewById(R.id.list_item_root_layout);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -104,6 +107,11 @@ public class UserAdapter extends BaseAdapter {
 	private void setData(ViewHolder holder, User user) {
 		holder.userNameTextView.setText(user.getFullName());
 		holder.mobileNumberTextView.setText(user.getMobile());
+		if (user.isSync()) {
+			holder.rootLinearLayout.setBackgroundResource(R.color.transparent);
+		} else {
+			holder.rootLinearLayout.setBackgroundResource(R.color.translucent);
+		}
 	}
 
 }

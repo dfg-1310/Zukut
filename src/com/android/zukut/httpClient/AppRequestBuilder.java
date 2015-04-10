@@ -90,4 +90,12 @@ public class AppRequestBuilder {
 				.addParam("deviceToken", deviceToken).addParam("uId", uId);
 	}
 
+
+	public static AppHttpRequest syncContact(long uId, String contacts,
+			AppResponseListener<UserList> appResponseListener) {
+		return AppHttpRequest
+				.getPostRequest(BASE_URL + "syncContacts", appResponseListener)
+				.addParam("uId", uId).addParam("contacts", contacts);
+	}
+
 }

@@ -5,7 +5,16 @@ public class User {
 	private String fullName;
 	private String mobile;
 	private long id;
-    /**
+	private boolean isSync;
+	
+	
+    public boolean isSync() {
+		return isSync;
+	}
+	public void setSync(boolean isSync) {
+		this.isSync = isSync;
+	}
+	/**
      * @return the fullName
      */
     public String getFullName() {
